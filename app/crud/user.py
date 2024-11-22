@@ -12,7 +12,7 @@ def createUser(user, db):
     db.refresh(new_user)
     return new_user
 
-def deleteUser(user_id: int, db, status_code):
+def deleteUser(user_id: int, db):
     delete_post = db.query(models.user.User).filter(models.user.User.user_id == user_id)
     delete_post_result = delete_post.first()
     if delete_post_result == None:
@@ -21,3 +21,14 @@ def deleteUser(user_id: int, db, status_code):
         delete_post.delete(synchronize_session=False)
         db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+def update(user_id: int, user, db):
+    updated_post = db.query(models.user.User).filter(models.user.User.user_id == user_id)
+    updated_post.first()
+    if updated_post == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with such id: {id} does not exist')
+    else:
+        updated_post.update(user.dict(), synchronize_session=False)
+        db.commit()
+    return updated_post.first()
