@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routers import user_router, product_router, transaction_router
-from middlewares.errorHandler import ErrorHandlerMiddleware
+from .routers import user_router, product_router, transaction_router
+from .middlewares.errorHandler import ErrorHandlerMiddleware
 
 app = FastAPI()
 

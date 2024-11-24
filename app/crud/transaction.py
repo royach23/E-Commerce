@@ -1,5 +1,5 @@
-from models.transaction import Transaction
-from models.transactionProduct import TransactionProduct
+from ..models.transaction import Transaction
+from ..models.transactionProduct import TransactionProduct
 from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import joinedload
 
@@ -25,7 +25,8 @@ def deleteTransaction(transaction_id: int, db):
     else:
         delete_transaction.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT,
+                content="transaction deleted successfully")
 
 
 def update(transaction_id: int, transaction, db):

@@ -1,4 +1,4 @@
-from models.product import Product
+from ..models.product import Product
 from fastapi import HTTPException, status, Response
 
 def getAllProducts(db):
@@ -20,7 +20,8 @@ def deleteProduct(product_id: int, db):
     else:
         delete_product.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT,
+                content="product deleted successfully")
 
 
 def update(product_id: int, product, db):

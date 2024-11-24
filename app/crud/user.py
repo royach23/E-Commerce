@@ -1,4 +1,4 @@
-from models.user import User
+from ..models.user import User
 from fastapi import HTTPException, status, Response
 
 def getAllUsers(db):
@@ -20,7 +20,8 @@ def deleteUser(user_id: int, db):
     else:
         delete_user.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT,
+                content="user deleted successfully")
 
 
 def update(user_id: int, user, db):
