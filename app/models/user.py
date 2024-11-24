@@ -1,5 +1,6 @@
 from sqlalchemy import String, Integer, Column
 from app.utils.database import Base
+from sqlalchemy.orm import relationship
 
 class User (Base):
     __tablename__ = 'users'
@@ -10,3 +11,5 @@ class User (Base):
     last_name = Column(String)
     address = Column (String)
     phone_number = Column(String)
+    transactions = relationship("Transaction", backref="users")
+    
