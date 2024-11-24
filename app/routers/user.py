@@ -17,14 +17,14 @@ path = '/user'
 def getAllUsers(db: Session = Depends(get_db)):
     return crud.user.getAllUsers(db)
 
-@router.post(path)
+@router.post(path, tags=['users'])
 def createUser(user: Users, db: Session = Depends (get_db)):
     return crud.user.createUser(user, db)
 
-@router.delete(path + "/{user_id}")
+@router.delete(path + "/{user_id}", tags=['users'])
 def delete(user_id:int, db: Session = Depends(get_db)):
     return crud.user.deleteUser(user_id, db)
 
-@router.put(path + "/{user_id}")
+@router.put(path + "/{user_id}", tags=['users'])
 def update(user_id:int, user: Users, db: Session = Depends(get_db)):
     return crud.user.update(user_id, user, db)

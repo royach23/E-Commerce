@@ -17,14 +17,14 @@ path = '/product'
 def getAllProducts(db: Session = Depends(get_db)):
     return crud.product.getAllProducts(db)
 
-@router.post(path)
+@router.post(path, tags=['products'])
 def createProduct(product: Products, db: Session = Depends (get_db)):
     return crud.product.createProduct(product, db)
 
-@router.delete(path + "/{product_id}")
+@router.delete(path + "/{product_id}", tags=['products'])
 def delete(product_id:int, db: Session = Depends(get_db)):
     return crud.product.deleteProduct(product_id, db)
 
-@router.put(path + "/{product_id}")
+@router.put(path + "/{product_id}", tags=['products'])
 def update(product_id:int, product: Products, db: Session = Depends(get_db)):
     return crud.product.update(product_id, product, db)

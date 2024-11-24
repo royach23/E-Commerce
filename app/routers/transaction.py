@@ -16,35 +16,35 @@ models.transaction.Base.metadata.create_all(bind= engine)
 
 path = '/transaction'
 
-@router.get(path + "/{transaction_id}")
+@router.get(path + "/{transaction_id}", tags=['transactions'])
 def getTransaction(transaction_id: int, db: Session = Depends(get_db)):
     return crud.transaction.getTransaction(transaction_id, db)
 
-@router.get(path + "/{transaction_id}/products")
+@router.get(path + "/{transaction_id}/products", tags=['transactions'])
 def getTransactionProducts(transaction_id: int, db: Session = Depends(get_db)):
     return crud.transactionProduct.getTransactionProducts(transaction_id, db)
 
-@router.get(path + "/{transaction_id}/product/{product_id}")
+@router.get(path + "/{transaction_id}/product/{product_id}", tags=['transactions'])
 def getTransactionProduct(transaction_id: int, product_id: int, db: Session = Depends(get_db)):
     return crud.transactionProduct.getTransactionProductById(transaction_id, product_id, db)
 
-@router.post(path)
+@router.post(path, tags=['transactions'])
 def createTransaction(transaction: Transactions, db: Session = Depends (get_db)):
     return crud.transaction.createTransaction(transaction, db)
 
-@router.post(path + "/{transaction_id}/product")
+@router.post(path + "/{transaction_id}/product", tags=['transactions'])
 def createTransactionProduct(transaction_id: int, partialTransactionProduct: PartialTransactionProducts, db: Session = Depends (get_db)):
     transactionProduct = TransactionProducts(transaction_id=transaction_id, product_id=partialTransactionProduct.product_id, quantity=partialTransactionProduct.quantity)
     return crud.transactionProduct.createTransactionProduct(transactionProduct, db)
 
-@router.delete(path + "/{transaction_id}")
+@router.delete(path + "/{transaction_id}", tags=['transactions'])
 def delete(transaction_id:int, db: Session = Depends(get_db)):
     return crud.transaction.deleteTransaction(transaction_id, db)
 
-@router.delete(path + "/{transaction_id}/product/{product_id}")
+@router.delete(path + "/{transaction_id}/product/{product_id}", tags=['transactions'])
 def delete(transaction_id:int,  product_id: int, db: Session = Depends(get_db)):
     return crud.transactionProduct.deleteTransactionProduct(transaction_id, product_id, db)
 
-@router.put(path + "/{transaction_id}")
+@router.put(path + "/{transaction_id}", tags=['transactions'])
 def update(transaction_id:int, transaction: Transactions, db: Session = Depends(get_db)):
     return crud.transaction.update(transaction_id, transaction, db)
