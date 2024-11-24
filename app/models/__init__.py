@@ -1,3 +1,3 @@
-__all__ = ["user", "product", "transaction", "transactionProduct"]
+__all__ = ["user", "product", "transaction", "transactionProduct", "userDetails"]
 from . import user
-from . import product, transaction, transactionProduct
+from . import product, transaction, transactionProduct, userDetails

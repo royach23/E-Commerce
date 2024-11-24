@@ -29,5 +29,4 @@ def deleteTransactionProduct(transaction_id: int, product_id: int, db):
     else:
         delete_transaction_product.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT,
-                content="transaction product deleted successfully")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

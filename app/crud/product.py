@@ -20,8 +20,7 @@ def deleteProduct(product_id: int, db):
     else:
         delete_product.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT,
-                content="product deleted successfully")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 def update(product_id: int, product, db):

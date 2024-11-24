@@ -25,8 +25,7 @@ def deleteTransaction(transaction_id: int, db):
     else:
         delete_transaction.delete(synchronize_session=False)
         db.commit()
-    return Response(status_code=status.HTTP_204_NO_CONTENT,
-                content="transaction deleted successfully")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 def update(transaction_id: int, transaction, db):
