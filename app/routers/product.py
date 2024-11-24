@@ -17,6 +17,10 @@ path = '/product'
 def getAllProducts(db: Session = Depends(get_db)):
     return productCrud.getAllProducts(db)
 
+@router.get('/product/search/{search_term}', tags=['products'], response_model=List[Products])
+def getAllProducts(search_term: str, db: Session = Depends(get_db)):
+    return productCrud.searchProducts(search_term, db)
+
 @router.post(path, tags=['products'])
 def createProduct(product: Products, db: Session = Depends (get_db)):
     return productCrud.createProduct(product, db)

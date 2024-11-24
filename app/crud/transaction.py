@@ -10,6 +10,10 @@ def getTransaction(transaction_id: int, db):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'transaction with such id: {transaction_id} does not exist')
     return transaction.first()
 
+def getUserTransactions(user_id: int, db):
+    transaction = db.query(Transaction).filter(Transaction.user_id == user_id).options(joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product))
+    return transaction.all()
+
 def createTransaction(transaction, db):
     new_transaction = Transaction(**transaction.dict())
     db.add(new_transaction)

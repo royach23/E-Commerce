@@ -5,6 +5,10 @@ def getAllProducts(db):
     all_products = db.query(Product).all()
     return all_products
 
+def searchProducts(search_term, db):
+    products = db.query(Product).filter(Product.name.ilike(f"%{search_term}%")).all()
+    return products
+
 def createProduct(product, db):
     new_product = Product(**product.dict())
     db.add(new_product)

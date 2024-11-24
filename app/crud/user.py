@@ -2,6 +2,10 @@ from ..models.user import User
 from ..models.userDetails import UserDetails
 from fastapi import HTTPException, status, Response
 from ..utils import security
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def createUser(user, db):
     new_user = User(**user.dict())
@@ -23,7 +27,8 @@ def authenticate_user(user, db):
         address= db_user.address,
         phone_number= db_user.phone_number
     )
-    return authenticated_user
+    access_token = security.create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
 def deleteUser(user_id: int, db):
     delete_user = db.query(User).filter(User.user_id == user_id)
@@ -45,3 +50,13 @@ def update(user_id: int, user, db):
         updated_user.update(user.dict(), synchronize_session=False)
         db.commit()
     return updated_user.first()
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = security.decode_access_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return payload
