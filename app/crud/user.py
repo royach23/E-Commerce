@@ -7,12 +7,12 @@ from fastapi.security import OAuth2PasswordBearer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def createUser(user, db):
+async def createUser(user, db):
     new_user = User(**user.dict())
     new_user.password = security.hash_password(new_user.password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
     return new_user
 
 def authenticate_user(user, db):
@@ -30,25 +30,25 @@ def authenticate_user(user, db):
     access_token = security.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
-def deleteUser(user_id: int, db):
+async def deleteUser(user_id: int, db):
     delete_user = db.query(User).filter(User.user_id == user_id)
     delete_user_result = delete_user.first()
     if delete_user_result == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with such id does not exist")
     else:
         delete_user.delete(synchronize_session=False)
-        db.commit()
+        await db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-def update(user_id: int, user, db):
+async def update(user_id: int, user, db):
     updated_user = db.query(User).filter(User.user_id == user_id)
     result = updated_user.first()
     if result == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with such id: {user_id} does not exist')
     else:
         updated_user.update(user.dict(), synchronize_session=False)
-        db.commit()
+        await db.commit()
     return updated_user.first()
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
