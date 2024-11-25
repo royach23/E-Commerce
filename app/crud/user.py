@@ -53,7 +53,7 @@ def update(user_id: int, user, db):
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = security.decode_access_token(token)
-    if payload is None:
+    if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
