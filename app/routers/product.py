@@ -14,21 +14,21 @@ productModel.Base.metadata.create_all(bind= engine)
 path = '/product'
 
 @router.get('/products', tags=['products'], response_model=List[Products])
-def getAllProducts(db: Session = Depends(get_db)):
-    return productCrud.getAllProducts(db)
+async def getAllProducts(db: Session = Depends(get_db)):
+    return await productCrud.getAllProducts(db)
 
 @router.get('/product/search/{search_term}', tags=['products'], response_model=List[Products])
-def getAllProducts(search_term: str, db: Session = Depends(get_db)):
-    return productCrud.searchProducts(search_term, db)
+async def getAllProducts(search_term: str, db: Session = Depends(get_db)):
+    return await productCrud.searchProducts(search_term, db)
 
 @router.post(path, tags=['products'])
-def createProduct(product: Products, db: Session = Depends (get_db)):
-    return productCrud.createProduct(product, db)
+async def createProduct(product: Products, db: Session = Depends (get_db)):
+    return await productCrud.createProduct(product, db)
 
 @router.delete(path + "/{product_id}", tags=['products'])
-def delete(product_id:int, db: Session = Depends(get_db)):
-    return productCrud.deleteProduct(product_id, db)
+async def delete(product_id:int, db: Session = Depends(get_db)):
+    return await productCrud.deleteProduct(product_id, db)
 
 @router.put(path + "/{product_id}", tags=['products'])
-def update(product_id:int, product: Products, db: Session = Depends(get_db)):
-    return productCrud.update(product_id, product, db)
+async def update(product_id:int, product: Products, db: Session = Depends(get_db)):
+    return await productCrud.update(product_id, product, db)

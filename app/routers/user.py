@@ -14,21 +14,21 @@ userModel.Base.metadata.create_all(bind= engine)
 path = '/user'
 
 @router.get(path + "/{user_id}/transactions", tags=['users'])
-def getUserTransactions(user_id: int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
-    return transactionCrud.getUserTransactions(user_id, db)
+async def getUserTransactions(user_id: int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
+    return await transactionCrud.getUserTransactions(user_id, db)
 
 @router.post(path, tags=['users'])
-def createUser(user: Users, db: Session = Depends (get_db)):
-    return userCrud.createUser(user, db)
+async def createUser(user: Users, db: Session = Depends (get_db)):
+    return await userCrud.createUser(user, db)
 
 @router.post("/login", tags=['users'])
-def login(user: LoginUsers, db: Session = Depends(get_db)):
-    return userCrud.authenticate_user(user, db)
+async def login(user: LoginUsers, db: Session = Depends(get_db)):
+    return await userCrud.authenticate_user(user, db)
 
 @router.delete(path + "/{user_id}", tags=['users'])
-def delete(user_id:int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
-    return userCrud.deleteUser(user_id, db)
+async def delete(user_id:int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
+    return await userCrud.deleteUser(user_id, db)
 
 @router.put(path + "/{user_id}", tags=['users'])
-def update(user_id:int, current_user: dict = Depends(userCrud.get_current_user), db: Session = Depends(get_db)):
-    return userCrud.update(user_id, current_user, db)
+async def update(user_id:int, current_user: dict = Depends(userCrud.get_current_user), db: Session = Depends(get_db)):
+    return await userCrud.update(user_id, current_user, db)
