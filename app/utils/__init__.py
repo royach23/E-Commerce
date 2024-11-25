@@ -1,2 +1,2 @@
-__all__ = ["database", "security"]
-from . import database, security
+__all__ = ["database", "security", "redis"]
+from . import database, security, redis

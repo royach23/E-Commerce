@@ -17,8 +17,8 @@ path = '/product'
 async def getAllProducts(db: Session = Depends(get_db)):
     return await productCrud.getAllProducts(db)
 
-@router.get('/product/search/{search_term}', tags=['products'], response_model=List[Products])
-async def getAllProducts(search_term: str, db: Session = Depends(get_db)):
+@router.get(path + '/search/{search_term}', tags=['products'], response_model=List[Products])
+async def searchProducts(search_term: str, db: Session = Depends(get_db)):
     return await productCrud.searchProducts(search_term, db)
 
 @router.post(path, tags=['products'])
