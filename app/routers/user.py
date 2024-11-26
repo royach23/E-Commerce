@@ -27,7 +27,7 @@ async def login(user: LoginUsers, db: Session = Depends(get_db)):
 
 @router.delete(path + "/{user_id}", tags=['users'])
 async def delete(user_id:int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
-    return await userCrud.deleteUser(user_id, db)
+    return await userCrud.deleteUser(user_id, current_user, db)
 
 @router.put(path + "/{user_id}", tags=['users'])
 async def update(user_id:int, current_user: dict = Depends(userCrud.get_current_user), db: Session = Depends(get_db)):

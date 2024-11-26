@@ -27,14 +27,16 @@ async def authenticate_user(user, db):
         address= db_user.address,
         phone_number= db_user.phone_number
     )
-    access_token = security.create_access_token(data={"sub": user.username})
+    access_token = security.create_access_token(data={"sub": user})
     return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
-async def deleteUser(user_id: int, db):
+async def deleteUser(user_id: int, current_user, db):
     delete_user = db.query(User).filter(User.user_id == user_id)
     delete_user_result = delete_user.first()
     if delete_user_result == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with such id does not exist")
+    if delete_user_result.username != current_user['sub']:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"unauthorized action")
     else:
         delete_user.delete(synchronize_session=False)
         db.commit()

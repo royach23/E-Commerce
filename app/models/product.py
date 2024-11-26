@@ -1,6 +1,7 @@
-from sqlalchemy import String, Integer, Column, Double
+from sqlalchemy import String, Integer, Column, Double, Enum
 from app.utils.database import Base
 from ..schemas.product import Products
+from ..enums.category import Category
 
 class Product (Base):
     __tablename__ = 'products'
@@ -9,7 +10,7 @@ class Product (Base):
     description = Column(String)
     price = Column (Double, nullable=False)
     quantity_in_stock = Column(Integer)
-    category = Column (String)
+    category = Column(Enum(Category))
 
     def to_dict(self):
         return {"name": self.name, "description": self.description, "price": self.price, "quantity_in_stock": self.quantity_in_stock, "category": self.category}
