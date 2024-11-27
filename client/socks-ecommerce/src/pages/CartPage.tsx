@@ -12,9 +12,11 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useCart } from '../contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 const Cart: React.FC = () => {
   const { state, dispatch } = useCart();
+  const navigate = useNavigate();
 
   const removeFromCart = (productId: number, size: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: {id: productId, size} });
@@ -143,6 +145,7 @@ const Cart: React.FC = () => {
             size="large" 
             fullWidth
             sx={{ py: 1.5 }}
+            onClick={() => navigate(`/checkout`)}
           >
             Proceed to Checkout
           </Button>
