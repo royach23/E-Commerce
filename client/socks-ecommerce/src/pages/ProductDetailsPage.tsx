@@ -46,7 +46,11 @@ const ProductDetail: React.FC = () => {
     if (product) {
       dispatch({ 
         type: 'ADD_TO_CART', 
-        payload: product 
+        payload: {
+          ...product,
+          quantity: quantity,
+          size: size
+        }
       });
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Container, 
   Typography, 
@@ -11,45 +11,20 @@ import {
   IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { CartItem } from '../types/Cart';
-
+import { useCart } from '../contexts/CartContext';
 
 const Cart: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-        id: 1,
-        name: 'Classic Cotton Crew',
-        price: 12.99,
-        quantity: 2,
-        size: 'M',
-        description: '1',
-        image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682',
-        inStock: false
-    },
-    {
-        id: 2,
-        name: 'Athletic Performance',
-        price: 15.99,
-        quantity: 1,
-        size: 'L',
-        description: '2',
-        image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682',
-        inStock: true
-    }
-  ]);
+  const { state, dispatch } = useCart();
 
-  const removeFromCart = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+  const removeFromCart = (productId: number) => {
+    dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
   };
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
-  };
-
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const updateQuantity = (productId: number, quantity: number) => {
+    dispatch({ 
+      type: 'UPDATE_QUANTITY', 
+      payload: { id: productId, quantity } 
+    });
   };
 
   return (
@@ -65,7 +40,7 @@ const Cart: React.FC = () => {
         Your Shopping Cart
       </Typography>
 
-      {cartItems.length === 0 ? (
+      {state.items.length === 0 ? (
         <Typography 
           variant="body1" 
           align="center"
@@ -76,8 +51,8 @@ const Cart: React.FC = () => {
       ) : (
         <Box>
           <List>
-            {cartItems.map((item) => (
-              <React.Fragment key={item.id}>
+            {state.items.map((item) => (
+              <React.Fragment key={item.product_id}>
                 <ListItem 
                   sx={{ 
                     py: 2, 
@@ -90,8 +65,11 @@ const Cart: React.FC = () => {
                       <Typography variant="subtitle1">
                         {item.name}
                       </Typography>
+                      <Typography variant="subtitle2">
+                        {item.size}
+                      </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Size: {item.size} | ${item.price.toFixed(2)} each
+                        ${item.price.toFixed(2)} each
                       </Typography>
                     </Grid2>
                     
@@ -103,7 +81,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                          onClick={() => updateQuantity(item.product_id, Math.max(1, item.quantity - 1))}
                           sx={{ minWidth: 40, mr: 1 }}
                         >
                           -
@@ -114,7 +92,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                           sx={{ minWidth: 40, ml: 1 }}
                         >
                           +
@@ -132,7 +110,7 @@ const Cart: React.FC = () => {
                       <IconButton 
                         edge="end" 
                         aria-label="delete"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.product_id)}
                         color="error"
                       >
                         <DeleteIcon />
@@ -155,7 +133,7 @@ const Cart: React.FC = () => {
               Total
             </Typography>
             <Typography variant="h6">
-              ${calculateTotal().toFixed(2)}
+              ${state.total.toFixed(2)}
             </Typography>
           </Box>
 

@@ -5,7 +5,7 @@ export interface CartItem extends Product {
     size: string
 }
   
-  export interface Cart {
+  export interface CartState {
     items: CartItem[];
     total: number;
 }
