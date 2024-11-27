@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from ..enums.category import Category
 from ..enums.size import Size
+from typing import List
 
 class Products(BaseModel):
     name: str
@@ -8,7 +9,7 @@ class Products(BaseModel):
     price: float
     in_stock: bool
     category: Category
-    sizes: Size
+    sizes: List[Size]
     image: str
 
     def __init__(self, **data):

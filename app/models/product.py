@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, Double, Enum, Boolean
+from sqlalchemy import String, Integer, Column, Double, Enum, Boolean, ARRAY
 from app.utils.database import Base
 from ..schemas.product import Products
 from ..enums.category import Category
@@ -12,11 +12,11 @@ class Product (Base):
     price = Column (Double, nullable=False)
     in_stock = Column(Boolean, nullable = False)
     category = Column(Enum(Category))
-    sizes = Column(Enum(Size))
+    sizes = Column(ARRAY(Enum(Size)))
     image = Column(String)
 
     def to_dict(self):
-        return {"name": self.name, "description": self.description, "price": self.price, "in_stock": self.in_stock, "category": self.category, "sizes": self.sizes, "image": self.image }
+        return {"name": self.name, "description": self.description, "price": self.price, "in_stock": self.in_stock, "category": self.category.name, "sizes": [size.name for size in self.sizes], "image": self.image }
 
     @staticmethod
     def from_dict(data):
