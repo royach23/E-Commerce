@@ -1,10 +1,10 @@
 export interface Product {
-    id: number;
+    product_id: number;
     name: string;
     price: number;
     description: string;
     image: string;
     category?: string;
     sizes?: string[];
-    inStock: boolean;
+    in_stock: boolean;
   }

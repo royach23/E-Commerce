@@ -16,7 +16,7 @@ class Product (Base):
     image = Column(String)
 
     def to_dict(self):
-        return {"name": self.name, "description": self.description, "price": self.price, "in_stock": self.in_stock, "category": self.category.name, "sizes": [size.name for size in self.sizes], "image": self.image }
+        return {"product_id": self.product_id, "name": self.name, "description": self.description, "price": self.price, "in_stock": self.in_stock, "category": self.category.value, "sizes": [size.value for size in self.sizes], "image": self.image }
 
     @staticmethod
     def from_dict(data):

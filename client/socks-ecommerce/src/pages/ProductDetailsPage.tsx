@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Typography, 
@@ -9,24 +9,28 @@ import {
   FormControl, 
   InputLabel,
   Box,
-  SelectChangeEvent
+  SelectChangeEvent,
+  CircularProgress
 } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { useProducts } from '../contexts/ProductContext';
 import { Product } from '../types/Product';
-
+import { useCart } from '../contexts/CartContext';
 
 const ProductDetail: React.FC = () => {
+  const { products, loading, error } = useProducts();
+  const { product_id } = useParams<{ product_id: string }>();
+  
+  const [product, setProduct] = useState<Product | null>(null);
   const [size, setSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
 
-  const product: Product = {
-    id: 1,
-    name: 'Classic Cotton Crew',
-    price: 12.99,
-    description: 'Comfortable everyday socks made from premium cotton blend.',
-    sizes: ['S', 'M', 'L', 'XL'],
-    image: '/socks-1.jpg',
-    inStock: true
-  };
+  useEffect(() => {
+    const foundProduct = products.find(
+      (p) => p.product_id == parseInt(product_id || '0')
+    );
+    setProduct(foundProduct || null);
+  }, [product_id, products]);
 
   const handleSizeChange = (event: SelectChangeEvent) => {
     setSize(event.target.value);
@@ -36,9 +40,20 @@ const ProductDetail: React.FC = () => {
     setQuantity(Number(event.target.value));
   };
 
+  const { dispatch } = useCart();
+
   const handleAddToCart = () => {
-    console.log(`Added ${quantity} ${product.name} in size ${size} to cart`);
+    if (product) {
+      dispatch({ 
+        type: 'ADD_TO_CART', 
+        payload: product 
+      });
+    }
   };
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
+  if (!product) return <Typography>Product not found</Typography>;
 
   return (
     <Container maxWidth="lg">
@@ -48,7 +63,7 @@ const ProductDetail: React.FC = () => {
             src={product.image} 
             alt={product.name} 
             style={{ 
-              width: '100%', 
+              width: '500px', 
               borderRadius: '8px' 
             }} 
           />
@@ -58,9 +73,9 @@ const ProductDetail: React.FC = () => {
             {product.name}
           </Typography>
           <Typography variant="h6" color="primary">
-            ${product.price}
+            ${product.price.toFixed(2)}
           </Typography>
-          <Typography variant="body1" paragraph>
+          <Typography variant="body1">
             {product.description}
           </Typography>
 
@@ -80,7 +95,9 @@ const ProductDetail: React.FC = () => {
                   <MenuItem key={s} value={s}>
                     {s}
                   </MenuItem>
-                ))}
+                )) || [
+                  <MenuItem key="M" value="M">M</MenuItem>
+                ]}
               </Select>
             </FormControl>
 
@@ -105,8 +122,9 @@ const ProductDetail: React.FC = () => {
             color="primary" 
             size="large" 
             onClick={handleAddToCart}
+            disabled={!product.in_stock}
           >
-            Add to Cart
+            {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
           </Button>
         </Grid2>
       </Grid2>

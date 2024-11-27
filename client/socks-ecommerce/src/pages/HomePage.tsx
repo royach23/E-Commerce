@@ -4,17 +4,21 @@ import {
   Typography, 
   Grid2, 
   Button, 
-  Box 
+  Box,
+  CircularProgress
 } from '@mui/material';
 import ProductCard from '../components/products/ProductCard';
-import { Product } from '../types/Product';
+import { useProducts } from '../contexts/ProductContext';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
-  const featuredSocks: Product[] = [
-    { id: 1, name: 'Classic Cotton Crew', price: 12.99, image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '1', inStock: true },
-    { id: 2, name: 'Athletic Performance', price: 15.99, image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '2', inStock: false },
-    { id: 3, name: 'Cozy Winter Wool', price: 18.99, image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '3', inStock: true }
-  ];
+  const { products, loading, error } = useProducts();
+  const navigate = useNavigate();
+
+  const featuredSocks = products.slice(0, 3);
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Container maxWidth="lg">
@@ -43,7 +47,7 @@ const HomePage: React.FC = () => {
         {featuredSocks.map((sock) => (
           <Grid2 key={sock.id}>
             <ProductCard
-            product={sock}
+              product={sock}
             />
           </Grid2>
         ))}
@@ -59,6 +63,7 @@ const HomePage: React.FC = () => {
           color="primary" 
           size="large"
           sx={{ px: 4, py: 1.5 }}
+          onClick={() => navigate('/products')}
         >
           Shop All Socks
         </Button>

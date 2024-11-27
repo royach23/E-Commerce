@@ -8,26 +8,20 @@ import {
   InputLabel,
   Box,
   SelectChangeEvent,
-  Grid2
+  Grid2,
+  CircularProgress,
+  TextField,
+  InputAdornment
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import ProductCard from '../components/products/ProductCard';
-import { Product } from '../types/Product';
+import { useProducts } from '../contexts/ProductContext';
 
 const Products: React.FC = () => {
+  const { products, loading, error, searchProducts, fetchProducts } = useProducts();
   const [category, setCategory] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
-
-  const sockProducts: Product[] = [
-    { id: 1, name: 'Classic Cotton Crew', price: 12.99, category: 'casual', image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '1', inStock: true },
-    { id: 2, name: 'Athletic Performance', price: 15.99, category: 'sports', image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '2', inStock: true },
-    { id: 3, name: 'Cozy Winter Wool', price: 18.99, category: 'winter', image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '3', inStock: false },
-    { id: 4, name: 'Compression Running', price: 19.99, category: 'sports', image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '4', inStock: true },
-    { id: 5, name: 'Dress Socks Set', price: 24.99, category: 'formal', image: 'https://socco78.com/cdn/shop/products/Socco-C1-TopView0266_cdc11079-7c39-4205-9484-15811efec52b.jpg?v=1631905682', description: '5', inStock: false }
-  ];
-
-  const filteredProducts = sockProducts.filter(
-    (product) => category === 'all' || product.category === category
-  );
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleCategoryChange = (event: SelectChangeEvent) => {
     setCategory(event.target.value);
@@ -36,6 +30,36 @@ const Products: React.FC = () => {
   const handleSortChange = (event: SelectChangeEvent) => {
     setSortBy(event.target.value);
   };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim() === '') {
+      await fetchProducts();
+      return;
+    }
+
+    await searchProducts(searchTerm);
+  };
+
+  const handleSearchKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const sortedAndFilteredProducts = products
+    .filter((product) => category === 'all' || product.category === category)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'pricelow':
+          return a.price - b.price;
+        case 'pricehigh':
+          return b.price - a.price;
+        default:
+          return 0;
+      }
+    });
+
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Container maxWidth="lg">
@@ -46,9 +70,26 @@ const Products: React.FC = () => {
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
+        alignItems: 'center',
         my: 3 
       }}>
-        <FormControl variant="outlined" sx={{ minWidth: 150 }}>
+        <TextField
+          variant="outlined"
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={handleSearchKeyPress}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            )
+          }}
+          sx={{ flexGrow: 1, mr: 2 }}
+        />
+
+        <FormControl variant="outlined" sx={{ minWidth: 150, mr: 2 }}>
           <InputLabel>Category</InputLabel>
           <Select
             value={category}
@@ -56,10 +97,10 @@ const Products: React.FC = () => {
             label="Category"
           >
             <MenuItem value="all">All Socks</MenuItem>
-            <MenuItem value="casual">Casual</MenuItem>
-            <MenuItem value="sports">Sports</MenuItem>
-            <MenuItem value="winter">Winter</MenuItem>
-            <MenuItem value="formal">Formal</MenuItem>
+            <MenuItem value="Casual">Casual</MenuItem>
+            <MenuItem value="Sports">Sports</MenuItem>
+            <MenuItem value="Winter">Winter</MenuItem>
+            <MenuItem value="Formal">Formal</MenuItem>
           </Select>
         </FormControl>
 
@@ -77,15 +118,23 @@ const Products: React.FC = () => {
         </FormControl>
       </Box>
 
-      <Grid2>
-        {filteredProducts.map((sock) => (
-          <Grid2 key={sock.id}>
-            <ProductCard 
-                product={sock}
-            />
-          </Grid2>
-        ))}
-      </Grid2>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : sortedAndFilteredProducts.length === 0 ? (
+        <Typography variant="body1" align="center" sx={{ mt: 4 }}>
+          No products found
+        </Typography>
+      ) : (
+        <Grid2 container spacing={3}>
+          {sortedAndFilteredProducts.map((sock) => (
+            <Grid2 key={sock.product_id}>
+              <ProductCard product={sock} />
+            </Grid2>
+          ))}
+        </Grid2>
+      )}
     </Container>
   );
 };

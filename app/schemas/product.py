@@ -4,6 +4,7 @@ from ..enums.size import Size
 from typing import List
 
 class Products(BaseModel):
+    product_id: int
     name: str
     description: str
     price: float

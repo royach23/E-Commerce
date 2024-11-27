@@ -6,11 +6,10 @@ import {
   Typography, 
   CardActions, 
   Button, 
-  IconButton 
 } from '@mui/material';
-import { Favorite as FavoriteIcon } from '@mui/icons-material';
 import { Product } from '../../types/Product';
 import { useCart } from '../../contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -26,6 +25,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
+  const navigate = useNavigate();
+
   return (
     <Card>
       <CardMedia
@@ -33,8 +34,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         height="250"
         image={product.image}
         alt={product.name}
-      />
-      <CardContent>
+        onClick={() => navigate(`/product/${product.product_id}`)}
+        sx={{cursor: 'pointer'}}
+/>
+      <CardContent 
+        onClick={() => navigate(`/product/${product.product_id}`)}
+        sx={{ cursor: 'pointer', pb: 0}}
+      >
         <Typography gutterBottom variant="h5">
           {product.name}
         </Typography>
@@ -47,16 +53,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </CardContent>
       <CardActions>
         <Button 
-          size="small" 
+          size="large" 
           color="primary" 
           onClick={handleAddToCart}
-          disabled={!product.inStock}
+          disabled={!product.in_stock}
         >
-          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
         </Button>
-        <IconButton>
-          <FavoriteIcon color="secondary" />
-        </IconButton>
       </CardActions>
     </Card>
   );
