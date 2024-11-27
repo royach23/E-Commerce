@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { Product } from '../types/Product';
+import api, { BASE_URL } from './api'
 
-const BASE_URL = 'http://127.0.0.1:8000/product';
+const Product_URL = `${BASE_URL}/product`;
 
 export const ProductService = {
   async getAllProducts(): Promise<Product[]> {
     try {
-      const response = await axios.get(`${BASE_URL}s`);
+      const response = await api.get(`${Product_URL}s`);
       return response.data;
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -16,7 +17,7 @@ export const ProductService = {
 
   async searchProducts(searchTerm: string): Promise<Product[]> {
     try {
-      const response = await axios.get(`${BASE_URL}/search/${searchTerm}`);
+      const response = await api.get(`${Product_URL}/search/${searchTerm}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
