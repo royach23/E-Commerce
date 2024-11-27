@@ -19,7 +19,15 @@ export const ProductService = {
       const response = await axios.get(`${BASE_URL}/search/${searchTerm}`);
       return response.data;
     } catch (error) {
-      console.error('Error searching products:', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 404) {
+          return [];
+        } else {
+          console.error("Error: No response received from server ", error);
+        }
+      } else {
+        console.error('Error searching products:', error);
+      }
       throw error;
     }
   }

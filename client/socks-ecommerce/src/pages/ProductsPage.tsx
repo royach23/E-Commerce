@@ -78,13 +78,15 @@ const Products: React.FC = () => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={handleSearchKeyPress}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
+          onKeyDown={handleSearchKeyPress}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <SearchIcon />
+                </InputAdornment>
             )
+            }
           }}
           sx={{ flexGrow: 1, mr: 2 }}
         />
@@ -129,7 +131,7 @@ const Products: React.FC = () => {
       ) : (
         <Grid2 container spacing={3}>
           {sortedAndFilteredProducts.map((sock) => (
-            <Grid2 key={sock.product_id}>
+            <Grid2 key={sock.product_id} >
               <ProductCard product={sock} />
             </Grid2>
           ))}
