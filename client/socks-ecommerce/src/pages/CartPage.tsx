@@ -16,14 +16,14 @@ import { useCart } from '../contexts/CartContext';
 const Cart: React.FC = () => {
   const { state, dispatch } = useCart();
 
-  const removeFromCart = (productId: number) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+  const removeFromCart = (productId: number, size: string) => {
+    dispatch({ type: 'REMOVE_FROM_CART', payload: {id: productId, size} });
   };
 
-  const updateQuantity = (productId: number, quantity: number) => {
+  const updateQuantity = (productId: number, size: string, quantity: number) => {
     dispatch({ 
       type: 'UPDATE_QUANTITY', 
-      payload: { id: productId, quantity } 
+      payload: { id: productId, size, quantity } 
     });
   };
 
@@ -81,7 +81,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.product_id, Math.max(1, item.quantity - 1))}
+                          onClick={() => updateQuantity(item.product_id, item.size, Math.max(1, item.quantity - 1))}
                           sx={{ minWidth: 40, mr: 1 }}
                         >
                           -
@@ -92,7 +92,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.product_id, item.size, item.quantity + 1)}
                           sx={{ minWidth: 40, ml: 1 }}
                         >
                           +
@@ -110,7 +110,7 @@ const Cart: React.FC = () => {
                       <IconButton 
                         edge="end" 
                         aria-label="delete"
-                        onClick={() => removeFromCart(item.product_id)}
+                        onClick={() => removeFromCart(item.product_id, item.size)}
                         color="error"
                       >
                         <DeleteIcon />
