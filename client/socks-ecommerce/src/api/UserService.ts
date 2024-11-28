@@ -12,9 +12,10 @@ export const UserService = {
       }
     },
 
-    async register(userData: User): Promise<void> {
+    async register(userData: User): Promise<LoginResponse> {
         try {
-          await api.post('/user', userData);
+          const response = await api.post('/user', userData);
+          return response.data;
         } catch (error) {
           console.error('Error registering user:', error);
           throw error;

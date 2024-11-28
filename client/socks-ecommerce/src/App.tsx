@@ -5,6 +5,7 @@ import { theme } from './styles/theme';
 import Layout from './components/layout/Layout';
 import { ProductProvider } from './contexts/ProductContext';
 import { CartProvider } from './contexts/CartContext';
+import { UserProvider } from './contexts/UserContext';
 
 const App: React.FC = () => {
   return (
@@ -12,9 +13,11 @@ const App: React.FC = () => {
       <CssBaseline />
       <CartProvider>
         <ProductProvider>
-          <Router>
-            <Layout />
-          </Router>
+          <UserProvider>
+            <Router>
+              <Layout />
+            </Router>
+          </UserProvider>
         </ProductProvider>
       </CartProvider>
     </ThemeProvider>

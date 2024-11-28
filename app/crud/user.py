@@ -1,4 +1,5 @@
 from ..models.user import User
+from ..models.loginUser import LoginUser
 from ..models.userDetails import UserDetails
 from fastapi import HTTPException, status, Response
 from ..utils import security
@@ -13,7 +14,16 @@ async def createUser(user, db):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+    authenticated_user = UserDetails(
+        user_id=new_user.user_id,
+        username=new_user.username,
+        first_name= new_user.first_name,
+        last_name= new_user.last_name,
+        address= new_user.address,
+        phone_number= new_user.phone_number
+    )
+    access_token = security.create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
 async def authenticate_user(user, db):
     db_user = db.query(User).filter(User.username == user.username).first()
@@ -27,7 +37,7 @@ async def authenticate_user(user, db):
         address= db_user.address,
         phone_number= db_user.phone_number
     )
-    access_token = security.create_access_token(data={"sub": user})
+    access_token = security.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
 async def deleteUser(user_id: int, current_user, db):

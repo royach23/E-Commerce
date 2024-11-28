@@ -10,7 +10,7 @@ class User (Base):
     first_name = Column (String, nullable=False)
     last_name = Column(String, nullable=False)
     address = Column (String, nullable=False)
-    phone_number = Column(String, nullable=False)
-    email = Column(String, nullable=False)
+    phone_number = Column(String, nullable=False, unique=True)
+    email = Column(String, nullable=False, unique=True)
     transactions = relationship("Transaction", backref="users")
     

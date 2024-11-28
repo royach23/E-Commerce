@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { 
   Dialog, 
   DialogTitle, 
@@ -10,6 +9,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { LoginCredentials } from '../../types/User';
+import { useUser } from '../../contexts/UserContext';
 
 interface LoginModalProps {
   open: boolean;
@@ -23,6 +23,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
   });
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
+  const { login } = useUser();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,16 +35,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post<{ access_token: string }>('/login', credentials);
-      
-      localStorage.setItem('token', response.data.access_token);
-      
+      await login(credentials);
       onClose();
       navigate('/');
     } catch (err) {
       setError('Invalid credentials. Please try again.');
       console.error(err);
     }
+  };
+
+  const handleRegister = () => {
+    onClose();
+    navigate('/register');
   };
 
   return (
@@ -72,6 +75,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleRegister} color="primary">
+          Register
+        </Button>
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>

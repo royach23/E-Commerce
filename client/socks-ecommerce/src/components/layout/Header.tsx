@@ -1,4 +1,3 @@
-// src/components/layout/Header.tsx
 import React, { useState } from 'react';
 import { 
   AppBar, 
@@ -17,18 +16,37 @@ import {
   Menu as MenuIcon, 
   ShoppingCart as CartIcon, 
   Home as HomeIcon, 
-  Storefront as ProductsIcon 
+  Storefront as ProductsIcon,
+  Login as LoginIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
+import { useUser } from '../../contexts/UserContext';
+import LoginModal from '../users/LoginModal';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const { state: { items: cartItems } } = useCart();
+  const { isAuthenticated, logout } = useUser();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleOpenLoginModal = () => {
+    setLoginModalOpen(true);
+  };
+
+  const handleCloseLoginModal = () => {
+    setLoginModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   const menuItems = [
@@ -72,7 +90,6 @@ const Header: React.FC = () => {
     <>
       <AppBar position="static">
         <Toolbar>
-          {/* Mobile Menu Toggle */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -83,7 +100,6 @@ const Header: React.FC = () => {
             <MenuIcon />
           </IconButton>
 
-          {/* Logo */}
           <Typography 
             variant="h6" 
             component="div" 
@@ -92,7 +108,6 @@ const Header: React.FC = () => {
             Sock Haven
           </Typography>
 
-          {/* Desktop Navigation */}
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {menuItems.map((item) => (
               <Button
@@ -107,7 +122,24 @@ const Header: React.FC = () => {
             ))}
           </Box>
 
-          {/* Cart Icon */}
+          {isAuthenticated ? (
+            <Button
+              color="inherit"
+              onClick={handleLogout}
+              startIcon={<LogoutIcon />}
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button
+              color="inherit"
+              startIcon={<LoginIcon />}
+              onClick={handleOpenLoginModal}
+            >
+              Login
+            </Button>
+          )}
+
           <IconButton 
             color="inherit"
             onClick={() => navigate('/cart')}
@@ -122,7 +154,6 @@ const Header: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Drawer */}
       <Drawer
         variant="temporary"
         anchor="left"
@@ -138,6 +169,11 @@ const Header: React.FC = () => {
       >
         {drawer}
       </Drawer>
+
+      <LoginModal 
+        open={loginModalOpen} 
+        onClose={handleCloseLoginModal} 
+      />
     </>
   );
 };

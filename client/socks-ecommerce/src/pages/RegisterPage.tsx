@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { 
   Container, 
   Typography, 
@@ -9,6 +8,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types/User';
+import { useUser } from '../contexts/UserContext';
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState<User>({
@@ -22,6 +22,7 @@ const RegisterPage: React.FC = () => {
   });
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
+  const { register } = useUser();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,8 +35,8 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await axios.post('/user', formData);
-      navigate('/login');
+      await register(formData);
+      navigate('/');
     } catch (err) {
       setError('Registration failed. Please check your information and try again.');
       console.error(err);

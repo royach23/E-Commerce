@@ -2,8 +2,7 @@ import React, {
     createContext, 
     useState, 
     useContext, 
-    ReactNode, 
-    useEffect 
+    ReactNode 
   } from 'react';
   import { 
     User, 
@@ -16,7 +15,7 @@ import React, {
     login: (credentials: LoginCredentials) => Promise<void>;
     logout: () => void;
     register: (userData: User) => Promise<void>;
-    getUserTransactions: (userId: number) => Promise<Transaction[]>;
+    // getUserTransactions: (userId: number) => Promise<Transaction[]>;
     deleteUser: (userId: number) => Promise<void>;
     updateUser: (userId: number) => Promise<void>;
     isAuthenticated: boolean;
@@ -28,7 +27,7 @@ import React, {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-    const login = async (credentials: LoginUser) => {
+    const login = async (credentials: LoginCredentials) => {
       try {
         const { access_token } = await UserService.login(credentials);
         localStorage.setItem('token', access_token);
@@ -46,12 +45,14 @@ import React, {
     };
   
     const register = async (userData: User) => {
-      await UserService.register(userData);
+      const { access_token } = await UserService.register(userData);
+      localStorage.setItem('token', access_token);
+      setIsAuthenticated(true);
     };
   
-    const getUserTransactions = async (userId: number): Promise<Transaction[]> => {
-      return UserService.getUserTransactions(userId);
-    };
+    // const getUserTransactions = async (userId: number): Promise<Transaction[]> => {
+    //   return UserService.getUserTransactions(userId);
+    // };
   
     const deleteUser = async (userId: number) => {
       await UserService.deleteUser(userId);
@@ -68,7 +69,7 @@ import React, {
         login, 
         logout, 
         register,
-        getUserTransactions,
+        // getUserTransactions,
         deleteUser,
         updateUser,
         isAuthenticated 
