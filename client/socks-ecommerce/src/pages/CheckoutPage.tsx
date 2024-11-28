@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Container, 
   Typography, 
@@ -14,15 +14,14 @@ import {
   Step,
   StepLabel
 } from '@mui/material';
+import { useUser } from '../contexts/UserContext';
 
 interface CheckoutFormData {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber: string;
   address: string;
-  city: string;
-  state: string;
-  zipCode: string;
   cardName: string;
   cardNumber: string;
   expMonth: string;
@@ -31,21 +30,33 @@ interface CheckoutFormData {
 }
 
 const Checkout: React.FC = () => {
+  const { user } = useUser(); 
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState<CheckoutFormData>({
     firstName: '',
     lastName: '',
     email: '',
+    phoneNumber: '',
     address: '',
-    city: '',
-    state: '',
-    zipCode: '',
     cardName: '',
     cardNumber: '',
     expMonth: '',
     expYear: '',
     cvv: ''
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prevData => ({
+        ...prevData,
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        email: user.email || '',
+        phoneNumber: user.phone_number || '',
+        address: user.address || ''
+      }));
+    }
+  }, [user]);
 
   const steps = ['Shipping Details', 'Payment Information', 'Review Order'];
 
@@ -72,7 +83,7 @@ const Checkout: React.FC = () => {
     switch (step) {
       case 0:
         return (
-          <Grid2 container spacing={3}>
+          <Grid2 container spacing={3} sx={{display: 'flex', justifyContent: 'center', width: '100%'}}>
             <Grid2>
               <TextField
                 required
@@ -81,6 +92,7 @@ const Checkout: React.FC = () => {
                 fullWidth
                 value={formData.firstName}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
             <Grid2>
@@ -91,9 +103,10 @@ const Checkout: React.FC = () => {
                 fullWidth
                 value={formData.lastName}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
-            <Grid2>
+            <Grid2 >
               <TextField
                 required
                 name="email"
@@ -102,61 +115,40 @@ const Checkout: React.FC = () => {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
-            <Grid2 >
-              <TextField
-                required
-                name="address"
-                label="Address"
-                fullWidth
-                value={formData.address}
-                onChange={handleChange}
-              />
-            </Grid2>
-            <Grid2>
-              <TextField
-                required
-                name="city"
-                label="City"
-                fullWidth
-                value={formData.city}
-                onChange={handleChange}
-              />
-            </Grid2>
-            <Grid2>
-              <FormControl fullWidth>
-                <InputLabel>State</InputLabel>
-                <Select
-                  name="state"
-                  value={formData.state}
-                  onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>)}
-                  label="State"
-                >
-                  {['CA', 'NY', 'TX', 'FL', 'IL'].map((state) => (
-                    <MenuItem key={state} value={state}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid2>
-            <Grid2>
-              <TextField
-                required
-                name="zipCode"
-                label="Zip Code"
-                fullWidth
-                value={formData.zipCode}
-                onChange={handleChange}
-              />
-            </Grid2>
+            {/* <Grid2 container spacing={3} sx={{display: 'flex', justifyContent: 'center', width: '100%'}}> */}
+              <Grid2 >
+                <TextField
+                  required
+                  name="phoneNumber"
+                  label="Phone Number"
+                  fullWidth
+                  type="tel"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+              <Grid2 >
+                <TextField
+                  required
+                  name="address"
+                  label="Address"
+                  fullWidth
+                  value={formData.address}
+                  onChange={handleChange}
+                  variant="outlined"
+                />
+              </Grid2>
+            {/* </Grid2> */}
           </Grid2>
         );
       case 1:
         return (
           <Grid2 container spacing={3}>
-            <Grid2>
+            <Grid2 >
               <TextField
                 required
                 name="cardName"
@@ -164,6 +156,7 @@ const Checkout: React.FC = () => {
                 fullWidth
                 value={formData.cardName}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
             <Grid2>
@@ -175,10 +168,11 @@ const Checkout: React.FC = () => {
                 type="text"
                 value={formData.cardNumber}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
-            <Grid2>
-              <FormControl fullWidth>
+            <Grid2 >
+              <FormControl fullWidth variant="outlined">
                 <InputLabel>Expiration Month</InputLabel>
                 <Select
                   name="expMonth"
@@ -194,8 +188,8 @@ const Checkout: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid2>
-            <Grid2>
-              <FormControl fullWidth>
+            <Grid2 >
+              <FormControl fullWidth variant="outlined">
                 <InputLabel>Expiration Year</InputLabel>
                 <Select
                   name="expYear"
@@ -220,6 +214,7 @@ const Checkout: React.FC = () => {
                 type="text"
                 value={formData.cvv}
                 onChange={handleChange}
+                variant="outlined"
               />
             </Grid2>
           </Grid2>
@@ -239,10 +234,10 @@ const Checkout: React.FC = () => {
                   {formData.firstName} {formData.lastName}
                 </Typography>
                 <Typography>
-                  {formData.address}
+                  {formData.phoneNumber}
                 </Typography>
                 <Typography>
-                  {formData.city}, {formData.state} {formData.zipCode}
+                  {formData.address}
                 </Typography>
               </Grid2>
               <Grid2>
