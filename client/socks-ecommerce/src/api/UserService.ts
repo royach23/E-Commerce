@@ -1,10 +1,18 @@
 import api from './api';
 import { User, LoginCredentials, LoginResponse } from '../types/User';
+import SecurityUtils from '../utils/Security';
 
 export const UserService = {
     async login(credentials: LoginCredentials): Promise<LoginResponse> {
       try {
-        const response = await api.post<LoginResponse>('/login', credentials);
+        const { hashedPassword } = await SecurityUtils.hashPassword(credentials.password);
+        
+        const loginPayload = {
+          username: credentials.username,
+          password: hashedPassword
+        };
+
+        const response = await api.post<LoginResponse>('/login', loginPayload);
         return response.data;
       } catch (error) {
         console.error('Error logging in:', error);
@@ -24,7 +32,15 @@ export const UserService = {
 
     async register(userData: User): Promise<LoginResponse> {
         try {
-          const response = await api.post('/user', userData);
+
+          const { hashedPassword } = await SecurityUtils.hashPassword(userData.password!);
+          
+          const userDataWithHashedPassword = {
+            ...userData,
+            password: hashedPassword,
+          };
+
+          const response = await api.post('/user', userDataWithHashedPassword);
           return response.data;
         } catch (error) {
           console.error('Error registering user:', error);
