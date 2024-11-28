@@ -101,7 +101,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
       sx={{
         '& .MuiDialog-paper': {
           width: '30vw',
-          height: '35vh',
+          height: '42vh',
           maxWidth: 'none'
         }
       }}
@@ -119,7 +119,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
           onChange={handleChange}
           error={!!errors.username}
           helperText={errors.username}
-          sx={{height: '4.5em'}}
+          sx={{height: '5em'}}
         />
         <TextField
           margin="dense"
@@ -131,6 +131,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
           onChange={handleChange}
           error={!!errors.password}
           helperText={errors.password}
+          sx={{height: '5em'}}
         />
         {errors.submit && <p style={{ color: 'red' }}>{errors.submit}</p>}
       </DialogContent>
