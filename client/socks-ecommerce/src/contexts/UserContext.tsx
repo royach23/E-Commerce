@@ -1,4 +1,4 @@
-import React, { 
+  import React, { 
     createContext, 
     useState, 
     useContext, 
@@ -10,7 +10,8 @@ import React, {
     LoginCredentials, 
   } from '../types/User';
   import UserService from '../api/UserService';
-  
+  import { useCart } from './CartContext';
+
   interface UserContextType {
     user: User | null;
     login: (credentials: LoginCredentials) => Promise<void>;
@@ -21,20 +22,21 @@ import React, {
     updateUser: (userId: number) => Promise<void>;
     isAuthenticated: boolean;
   }
-  
+
   const UserContext = createContext<UserContextType | undefined>(undefined);
-  
+
   export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
+    const { dispatch: cartDispatch } = useCart();
+
     useEffect(() => {
       const token = localStorage.getItem('token');
       if (token) {
         verifyToken();
       }
     }, []);
-  
+
     const verifyToken = async () => {
       try {
         const response = await UserService.verifyToken();
@@ -57,13 +59,16 @@ import React, {
         throw error;
       }
     };
-  
+
     const logout = () => {
       localStorage.removeItem('token');
       setUser(null);
       setIsAuthenticated(false);
+      
+      // Clear the cart when logging out
+      cartDispatch({ type: 'CLEAR_CART' });
     };
-  
+
     const register = async (userData: User) => {
       const { access_token, user } = await UserService.register(userData);
       localStorage.setItem('token', access_token);
@@ -79,11 +84,11 @@ import React, {
       await UserService.deleteUser(userId);
       logout();
     };
-  
+
     const updateUser = async (userId: number) => {
       await UserService.updateUser(userId);
     };
-  
+
     return (
       <UserContext.Provider value={{ 
         user, 
@@ -99,7 +104,7 @@ import React, {
       </UserContext.Provider>
     );
   };
-  
+
   export const useUser = () => {
     const context = useContext(UserContext);
     if (context === undefined) {
