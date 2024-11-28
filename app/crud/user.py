@@ -20,12 +20,13 @@ async def createUser(user, db):
         first_name= new_user.first_name,
         last_name= new_user.last_name,
         address= new_user.address,
-        phone_number= new_user.phone_number
+        phone_number= new_user.phone_number,
+        email= new_user.email
     )
     access_token = security.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
 
-async def authenticate_user(user, db):
+async def authenticateUser(user, db):
     db_user = db.query(User).filter(User.username == user.username).first()
     if not db_user or not security.verify_password(user.password, db_user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid username or password")
@@ -35,10 +36,26 @@ async def authenticate_user(user, db):
         first_name= db_user.first_name,
         last_name= db_user.last_name,
         address= db_user.address,
-        phone_number= db_user.phone_number
+        phone_number= db_user.phone_number,
+        email= db_user.email
     )
     access_token = security.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer", "user": authenticated_user}
+
+async def verifyUser(username, db):
+    db_user = db.query(User).filter(User.username == username['sub']).first()
+    if not db_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"invalid user details")
+    authenticated_user = UserDetails(
+        user_id=db_user.user_id,
+        username=db_user.username,
+        first_name= db_user.first_name,
+        last_name= db_user.last_name,
+        address= db_user.address,
+        phone_number= db_user.phone_number,
+        email= db_user.email
+    )
+    return {"user": authenticated_user}
 
 async def deleteUser(user_id: int, current_user, db):
     delete_user = db.query(User).filter(User.user_id == user_id)

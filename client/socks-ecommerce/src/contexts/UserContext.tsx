@@ -2,7 +2,8 @@ import React, {
     createContext, 
     useState, 
     useContext, 
-    ReactNode 
+    ReactNode,
+    useEffect
   } from 'react';
   import { 
     User, 
@@ -27,10 +28,29 @@ import React, {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
   
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        verifyToken();
+      }
+    }, []);
+  
+    const verifyToken = async () => {
+      try {
+        const response = await UserService.verifyToken();
+        setUser(response.user);
+        setIsAuthenticated(true);
+      } catch (error) {
+        logout();
+        throw error;
+      }
+    };
+
     const login = async (credentials: LoginCredentials) => {
       try {
-        const { access_token } = await UserService.login(credentials);
+        const { access_token, user } = await UserService.login(credentials);
         localStorage.setItem('token', access_token);
+        setUser(user);
         setIsAuthenticated(true);
       } catch (error) {
         logout();
@@ -45,8 +65,9 @@ import React, {
     };
   
     const register = async (userData: User) => {
-      const { access_token } = await UserService.register(userData);
+      const { access_token, user } = await UserService.register(userData);
       localStorage.setItem('token', access_token);
+      setUser(user);
       setIsAuthenticated(true);
     };
   

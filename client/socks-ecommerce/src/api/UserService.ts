@@ -12,6 +12,16 @@ export const UserService = {
       }
     },
 
+    async verifyToken(): Promise<LoginResponse> {
+      try {
+        const response = await api.post<LoginResponse>('/user/verify');
+        return response.data;
+      } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+      }
+    },
+
     async register(userData: User): Promise<LoginResponse> {
         try {
           const response = await api.post('/user', userData);

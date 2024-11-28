@@ -23,7 +23,11 @@ async def createUser(user: Users, db: Session = Depends (get_db)):
 
 @router.post("/login", tags=['users'])
 async def login(user: LoginUsers, db: Session = Depends(get_db)):
-    return await userCrud.authenticate_user(user, db)
+    return await userCrud.authenticateUser(user, db)
+
+@router.post(path + "/verify", tags=['users'])
+async def login(db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
+    return await userCrud.verifyUser(current_user, db)
 
 @router.delete(path + "/{user_id}", tags=['users'])
 async def delete(user_id:int, db: Session = Depends(get_db), current_user: dict = Depends(userCrud.get_current_user)):
