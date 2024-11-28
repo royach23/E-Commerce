@@ -1,6 +1,7 @@
 import api from './api';
 import { User, LoginCredentials, LoginResponse } from '../types/User';
 import SecurityUtils from '../utils/Security';
+import { Transaction } from '../types/Transaction';
 
 export const UserService = {
     async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -50,7 +51,7 @@ export const UserService = {
 
       async deleteUser(userId: number): Promise<void> {
         try {
-            await api.delete(`/user/${userId}`);
+          await api.delete(`/user/${userId}`);
         } catch (error) {
           console.error('Error deleting user:', error);
           throw error;
@@ -59,9 +60,24 @@ export const UserService = {
 
       async updateUser(userId: number): Promise<void> {
         try {
-            await api.put(`/user/${userId}`);
+          await api.put(`/user/${userId}`);
         } catch (error) {
           console.error('Error deleting user:', error);
+          throw error;
+        }
+      },
+
+      async getUserTransactions(userId: number): Promise<Transaction[]> {
+        try {
+          const response = await api.get(`user/${userId}/transactions`);
+          const transactions = {
+            user_id: response.data.user_id,
+            total_price: response.data.total_price, //continue matching to the postman 
+          };
+
+          return transactions;
+        } catch (error) {
+          console.error('Error fetching transaction:', error);
           throw error;
         }
       },

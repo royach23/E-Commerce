@@ -8,5 +8,5 @@ class TransactionProduct (Base):
     transaction_id = Column(Integer, ForeignKey("transactions.transaction_id"), primary_key=True, nullable=False)
     product_id = Column(Integer, ForeignKey("products.product_id"), primary_key=True, nullable=False)
     quantity = Column(Integer, nullable=False)
-    Size = Column(Enum(Size), nullable=False)
+    size = Column(Enum(Size), nullable=False)
     product = relationship("Product", backref="transaction_products")

@@ -12,6 +12,8 @@ async def getTransaction(transaction_id: int, db):
 
 async def getUserTransactions(user_id: int, db):
     transaction = db.query(Transaction).filter(Transaction.user_id == user_id).options(joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product))
+    if not transaction:
+        return []
     return transaction.all()
 
 async def createTransaction(transaction, db):
