@@ -3,11 +3,11 @@ import { Transaction, mapJsonToTransaction } from '../types/Transaction';
 import { CartItem } from '../types/Cart';
 
 export const TransactionService = {
-    async createNewTransaction(transaction: Transaction): Promise<Transaction> {
+    async createNewTransaction(userId: number, total: number): Promise<Transaction> {
       try {
         const transactionPayload = {
-            user_id: transaction.userId,
-            total_price: transaction.cart.total,
+            user_id: userId,
+            total_price: total,
           };
 
         const response = await api.post('/transaction', transactionPayload);

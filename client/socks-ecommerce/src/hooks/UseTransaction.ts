@@ -28,19 +28,10 @@ export const useTransaction = () => {
       setIsLoading(true);
       setError(null);
 
-      const transactionPayload: Transaction = {
-        userId: user.id!,
-        purchaseTime: new Date().toISOString(),
-        orderStatus: 'PENDING',
-        cart: cart
-      };
-
-      console.log(transactionPayload)
-
-      const newTransaction = await TransactionService.createNewTransaction(transactionPayload);
+      const newTransaction = await TransactionService.createNewTransaction(user.id!, cart.total);
 
       for (const item of cart.items) {
-        await TransactionService.createNewTransactionProduct(item, newTransaction.userId);
+        await TransactionService.createNewTransactionProduct(item, newTransaction.transactionId);
       }
 
       cartDispatch({ type: 'CLEAR_CART' });

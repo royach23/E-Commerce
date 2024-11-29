@@ -34,7 +34,7 @@ async def createTransaction(transaction: PartialTransactions, db: Session = Depe
 
 @router.post(path + "/{transaction_id}/product", tags=['transactions'])
 async def createTransactionProduct(transaction_id: int, partialTransactionProduct: PartialTransactionProducts, db: Session = Depends (get_db), current_user: dict = Depends(userCrud.get_current_user)):
-    transactionProduct = TransactionProducts(transaction_id=transaction_id, product_id=partialTransactionProduct.product_id, quantity=partialTransactionProduct.quantity)
+    transactionProduct = TransactionProducts(transaction_id=transaction_id, product_id=partialTransactionProduct.product_id, quantity=partialTransactionProduct.quantity, size=partialTransactionProduct.size)
     return await transactionProductCrud.createTransactionProduct(transactionProduct, db)
 
 @router.delete(path + "/{transaction_id}", tags=['transactions'])

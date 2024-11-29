@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useUser } from '../contexts/UserContext';
 import { useTransaction } from '../hooks/UseTransaction';
+import { useNavigate } from 'react-router-dom';
 
 interface CheckoutFormData {
   cardName: string;
@@ -42,6 +43,7 @@ const Checkout: React.FC = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<CheckoutFormData>({
     cardName: '',
@@ -148,7 +150,7 @@ const Checkout: React.FC = () => {
         if (transaction) {
           setSnackbarMessage('Order placed successfully!');
           setOpenSnackbar(true);
-          // Optionally, redirect to order confirmation or transaction details page
+          navigate(`/`)
         } else {
           setSnackbarMessage('Failed to place order. Please try again.');
           setOpenSnackbar(true);

@@ -2,10 +2,11 @@ import { CartState } from "./Cart";
 import { Product } from "./Product";
 
 export interface Transaction {
-    cart: CartState;
+    cart?: CartState;
     purchaseTime: string;
     orderStatus: string;
     userId: number;
+    transactionId: number;
   }
 
   interface JsonResponse {
@@ -34,9 +35,10 @@ export interface Transaction {
       userId: jsonResponse.user_id,
       purchaseTime: jsonResponse.purchase_time,
       orderStatus: jsonResponse.order_status,
+      transactionId: jsonResponse.transaction_id,
       cart: {
         total: jsonResponse.total_price,
-        items: jsonResponse.transaction_products.map((productEntry) => ({
+        items: jsonResponse.transaction_products?.map((productEntry) => ({
           quantity: productEntry.quantity,
           size: productEntry.size,
           product_id: productEntry.product.product_id,
