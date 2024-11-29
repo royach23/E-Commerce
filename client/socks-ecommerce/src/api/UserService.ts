@@ -1,7 +1,7 @@
 import api from './api';
 import { User, LoginCredentials, LoginResponse } from '../types/User';
 import SecurityUtils from '../utils/Security';
-import { Transaction } from '../types/Transaction';
+import { mapJsonToTransactions, Transaction } from '../types/Transaction';
 
 export const UserService = {
     async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -70,12 +70,8 @@ export const UserService = {
       async getUserTransactions(userId: number): Promise<Transaction[]> {
         try {
           const response = await api.get(`user/${userId}/transactions`);
-          const transactions = {
-            user_id: response.data.user_id,
-            total_price: response.data.total_price, //continue matching to the postman 
-          };
 
-          return transactions;
+          return mapJsonToTransactions(response.data);;
         } catch (error) {
           console.error('Error fetching transaction:', error);
           throw error;
