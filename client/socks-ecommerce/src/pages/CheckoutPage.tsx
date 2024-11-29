@@ -12,9 +12,12 @@ import {
   Box,
   Stepper,
   Step,
-  StepLabel
+  StepLabel,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { useUser } from '../contexts/UserContext';
+import { useTransaction } from '../hooks/UseTransaction';
 
 interface CheckoutFormData {
   cardName: string;
@@ -34,7 +37,12 @@ interface FormErrors {
 
 const Checkout: React.FC = () => {
   const { user, isAuthenticated } = useUser(); 
+  const { createTransaction } = useTransaction();
   const [activeStep, setActiveStep] = useState(0);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState<CheckoutFormData>({
     cardName: '',
     cardNumber: '',
@@ -129,12 +137,34 @@ const Checkout: React.FC = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (validateForm()) {
-      console.log('Order submitted', formData);
-      // Implement order submission logic
+      setIsSubmitting(true);
+      try {
+        const transaction = await createTransaction();
+        
+        if (transaction) {
+          setSnackbarMessage('Order placed successfully!');
+          setOpenSnackbar(true);
+          // Optionally, redirect to order confirmation or transaction details page
+        } else {
+          setSnackbarMessage('Failed to place order. Please try again.');
+          setOpenSnackbar(true);
+        }
+      } catch (error) {
+        setSnackbarMessage('An error occurred while placing the order.');
+        setOpenSnackbar(true);
+        console.error('Order submission error:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   const renderStepContent = (step: number) => {
@@ -361,12 +391,30 @@ const Checkout: React.FC = () => {
               variant="contained" 
               color="primary" 
               onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+              disabled={isSubmitting}
             >
-              {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
+              {activeStep === steps.length - 1 
+                ? (isSubmitting ? 'Placing Order...' : 'Place Order') 
+                : 'Next'}
             </Button>
           </Box>
         </>
       )}
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbarMessage.includes('successfully') ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

@@ -7,7 +7,8 @@
   } from 'react';
   import { 
     User, 
-    LoginCredentials, 
+    LoginCredentials,
+    createUserFromJson, 
   } from '../types/User';
   import UserService from '../api/UserService';
   import { useCart } from './CartContext';
@@ -65,7 +66,6 @@
       setUser(null);
       setIsAuthenticated(false);
       
-      // Clear the cart when logging out
       cartDispatch({ type: 'CLEAR_CART' });
     };
 

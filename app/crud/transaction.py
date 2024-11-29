@@ -1,3 +1,4 @@
+from ..enums.orderStatus import OrderStatus
 from ..models.transaction import Transaction
 from ..models.transactionProduct import TransactionProduct
 from fastapi import HTTPException, status, Response
@@ -17,7 +18,7 @@ async def getUserTransactions(user_id: int, db):
     return transaction.all()
 
 async def createTransaction(transaction, db):
-    new_transaction = Transaction(**transaction.dict())
+    new_transaction = Transaction(**transaction.dict(), order_status= OrderStatus.PENDING.value)
     db.add(new_transaction)
     db.commit()
     db.refresh(new_transaction)

@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from ..schemas.partialTransaction import PartialTransactions
 from ..crud import transaction as transactionCrud, transactionProduct as transactionProductCrud
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -28,7 +29,7 @@ async def getTransactionProduct(transaction_id: int, product_id: int, db: Sessio
     return await transactionProductCrud.getTransactionProductById(transaction_id, product_id, db)
 
 @router.post(path, tags=['transactions'])
-async def createTransaction(transaction: Transactions, db: Session = Depends (get_db), current_user: dict = Depends(userCrud.get_current_user)):
+async def createTransaction(transaction: PartialTransactions, db: Session = Depends (get_db), current_user: dict = Depends(userCrud.get_current_user)):
     return await transactionCrud.createTransaction(transaction, db)
 
 @router.post(path + "/{transaction_id}/product", tags=['transactions'])

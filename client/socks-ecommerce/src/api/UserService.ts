@@ -1,5 +1,5 @@
 import api from './api';
-import { User, LoginCredentials, LoginResponse } from '../types/User';
+import { User, LoginCredentials, LoginResponse, createUserFromJson } from '../types/User';
 import SecurityUtils from '../utils/Security';
 import { mapJsonToTransactions, Transaction } from '../types/Transaction';
 
@@ -14,7 +14,7 @@ export const UserService = {
         };
 
         const response = await api.post<LoginResponse>('/login', loginPayload);
-        return response.data;
+        return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);
         throw error;
@@ -23,8 +23,8 @@ export const UserService = {
 
     async verifyToken(): Promise<LoginResponse> {
       try {
-        const response = await api.post<LoginResponse>('/user/verify');
-        return response.data;
+        const response = await api.post('/user/verify');
+        return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);
         throw error;
@@ -42,7 +42,7 @@ export const UserService = {
           };
 
           const response = await api.post('/user', userDataWithHashedPassword);
-          return response.data;
+          return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
         } catch (error) {
           console.error('Error registering user:', error);
           throw error;
