@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Header from './Header'; 
 import Footer from './Footer'; 
-import { Home, Products, ProductDetail, Cart, Checkout, Register } from '../../pages';
+import { Home, Products, ProductDetail, Cart, Checkout, Register, OrderCompletion } from '../../pages';
 
 const Layout: React.FC = () => {
   return (
@@ -33,6 +33,7 @@ const Layout: React.FC = () => {
           <Route path="/product/:product_id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-completion" element={<OrderCompletion />} />
           <Route path="/register" element={<Register />} />
         </Routes>
       </Container>

@@ -148,9 +148,15 @@ const Checkout: React.FC = () => {
         const transaction = await createTransaction();
         
         if (transaction) {
-          setSnackbarMessage('Order placed successfully!');
-          setOpenSnackbar(true);
-          navigate(`/`)
+          navigate('/order-completion', {
+            state: {
+              orderDetails: {
+                orderId: transaction.transactionId,
+                total: transaction.cart?.total,
+                estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
+              }
+            }
+          });
         } else {
           setSnackbarMessage('Failed to place order. Please try again.');
           setOpenSnackbar(true);
