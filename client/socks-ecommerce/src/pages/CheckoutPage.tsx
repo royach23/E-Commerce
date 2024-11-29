@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Container, 
   Typography, 
@@ -17,11 +17,6 @@ import {
 import { useUser } from '../contexts/UserContext';
 
 interface CheckoutFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  address: string;
   cardName: string;
   cardNumber: string;
   expMonth: string;
@@ -30,14 +25,9 @@ interface CheckoutFormData {
 }
 
 const Checkout: React.FC = () => {
-  const { user } = useUser(); 
+  const { user, isAuthenticated } = useUser(); 
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState<CheckoutFormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
     cardName: '',
     cardNumber: '',
     expMonth: '',
@@ -45,20 +35,7 @@ const Checkout: React.FC = () => {
     cvv: ''
   });
 
-  useEffect(() => {
-    if (user) {
-      setFormData(prevData => ({
-        ...prevData,
-        firstName: user.first_name || '',
-        lastName: user.last_name || '',
-        email: user.email || '',
-        phoneNumber: user.phone_number || '',
-        address: user.address || ''
-      }));
-    }
-  }, [user]);
-
-  const steps = ['Shipping Details', 'Payment Information', 'Review Order'];
+  const steps = ['Payment Information', 'Review Order'];
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -82,70 +59,6 @@ const Checkout: React.FC = () => {
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
-        return (
-          <Grid2 container spacing={3} sx={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-            <Grid2>
-              <TextField
-                required
-                name="firstName"
-                label="First Name"
-                fullWidth
-                value={formData.firstName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2>
-              <TextField
-                required
-                name="lastName"
-                label="Last Name"
-                fullWidth
-                value={formData.lastName}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            <Grid2 >
-              <TextField
-                required
-                name="email"
-                label="Email Address"
-                fullWidth
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                variant="outlined"
-              />
-            </Grid2>
-            {/* <Grid2 container spacing={3} sx={{display: 'flex', justifyContent: 'center', width: '100%'}}> */}
-              <Grid2 >
-                <TextField
-                  required
-                  name="phoneNumber"
-                  label="Phone Number"
-                  fullWidth
-                  type="tel"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  variant="outlined"
-                />
-              </Grid2>
-              <Grid2 >
-                <TextField
-                  required
-                  name="address"
-                  label="Address"
-                  fullWidth
-                  value={formData.address}
-                  onChange={handleChange}
-                  variant="outlined"
-                />
-              </Grid2>
-            {/* </Grid2> */}
-          </Grid2>
-        );
-      case 1:
         return (
           <Grid2 container spacing={3}>
             <Grid2 >
@@ -219,7 +132,7 @@ const Checkout: React.FC = () => {
             </Grid2>
           </Grid2>
         );
-      case 2:
+      case 1:
         return (
           <Box>
             <Typography variant="h6" gutterBottom>
@@ -228,16 +141,19 @@ const Checkout: React.FC = () => {
             <Grid2 container spacing={2}>
               <Grid2>
                 <Typography variant="subtitle1">
-                  Shipping Address
+                  Customer Information
                 </Typography>
                 <Typography>
-                  {formData.firstName} {formData.lastName}
+                  {user?.first_name} {user?.last_name}
                 </Typography>
                 <Typography>
-                  {formData.phoneNumber}
+                  {user?.email}
                 </Typography>
                 <Typography>
-                  {formData.address}
+                  {user?.phone_number}
+                </Typography>
+                <Typography>
+                  {user?.address}
                 </Typography>
               </Grid2>
               <Grid2>
@@ -272,38 +188,51 @@ const Checkout: React.FC = () => {
         Checkout
       </Typography>
 
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      <Box sx={{ mt: 4, mb: 4 }}>
-        {renderStepContent(activeStep)}
-      </Box>
-
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        mt: 4 
-      }}>
-        <Button 
-          disabled={activeStep === 0} 
-          onClick={handleBack}
-          variant="outlined"
+      {!isAuthenticated ? (
+        <Typography 
+          variant="body1" 
+          align="center" 
+          color="error"
+          sx={{ mt: 4 }}
         >
-          Back
-        </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
-        >
-          {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
-        </Button>
-      </Box>
+          Please sign in to proceed to checkout
+        </Typography>
+      ) : (
+        <>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+
+          <Box sx={{ mt: 4, mb: 4 }}>
+            {renderStepContent(activeStep)}
+          </Box>
+
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            mt: 4 
+          }}>
+            <Button 
+              disabled={activeStep === 0} 
+              onClick={handleBack}
+              variant="outlined"
+            >
+              Back
+            </Button>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
+            >
+              {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
+            </Button>
+          </Box>
+        </>
+      )}
     </Container>
   );
 };
