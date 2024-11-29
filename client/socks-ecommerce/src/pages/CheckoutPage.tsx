@@ -24,6 +24,14 @@ interface CheckoutFormData {
   cvv: string;
 }
 
+interface FormErrors {
+  cardName: string;
+  cardNumber: string;
+  expMonth: string;
+  expYear: string;
+  cvv: string;
+}
+
 const Checkout: React.FC = () => {
   const { user, isAuthenticated } = useUser(); 
   const [activeStep, setActiveStep] = useState(0);
@@ -35,33 +43,107 @@ const Checkout: React.FC = () => {
     cvv: ''
   });
 
+  const [errors, setErrors] = useState<FormErrors>({
+    cardName: '',
+    cardNumber: '',
+    expMonth: '',
+    expYear: '',
+    cvv: ''
+  });
+
   const steps = ['Payment Information', 'Review Order'];
 
+  const validateCardName = (name: string) => {
+    if (!name.trim()) return 'Cardholder name is required';
+    if (name.trim().length < 3) return 'Name must be at least 3 characters';
+    return '';
+  };
+
+  const validateCardNumber = (number: string) => {
+    const cleanedNumber = number.replace(/\s+/g, '');
+    if (!cleanedNumber) return 'Card number is required';
+    if (!/^\d{16}$/.test(cleanedNumber)) return 'Card number must be 16 digits';
+    return '';
+  };
+
+  const validateCVV = (cvv: string) => {
+    if (!cvv.trim()) return 'CVV is required';
+    if (!/^\d{3,4}$/.test(cvv)) return 'CVV must be 3 or 4 digits';
+    return '';
+  };
+
+  const validateExpirationMonth = (month: string) => {
+    if (!month) return 'Expiration month is required';
+    return '';
+  };
+
+  const validateExpirationYear = (year: string) => {
+    if (!year) return 'Expiration year is required';
+    return '';
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    switch (name) {
+      case 'cardName':
+        setErrors(prev => ({ ...prev, cardName: validateCardName(value) }));
+        break;
+      case 'cardNumber':
+        setErrors(prev => ({ ...prev, cardNumber: validateCardNumber(value) }));
+        break;
+      case 'cvv':
+        setErrors(prev => ({ ...prev, cvv: validateCVV(value) }));
+        break;
+      case 'expMonth':
+        setErrors(prev => ({ ...prev, expMonth: validateExpirationMonth(value) }));
+        break;
+      case 'expYear':
+        setErrors(prev => ({ ...prev, expYear: validateExpirationYear(value) }));
+        break;
+    }
+  };
+
+  const validateForm = () => {
+    const formErrors = {
+      cardName: validateCardName(formData.cardName),
+      cardNumber: validateCardNumber(formData.cardNumber),
+      expMonth: validateExpirationMonth(formData.expMonth),
+      expYear: validateExpirationYear(formData.expYear),
+      cvv: validateCVV(formData.cvv)
+    };
+
+    setErrors(formErrors);
+
+    return !Object.values(formErrors).some(error => error !== '');
+  };
+
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (validateForm()) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Order submitted', formData);
-    // Implement order submission logic
+    if (validateForm()) {
+      console.log('Order submitted', formData);
+      // Implement order submission logic
+    }
   };
 
   const renderStepContent = (step: number) => {
     switch (step) {
       case 0:
         return (
-          <Grid2 container spacing={3}>
-            <Grid2 >
+          <Grid2 sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+          <Grid2 container spacing={5} marginY={1}>
+            <Grid2>
               <TextField
                 required
                 name="cardName"
@@ -70,6 +152,13 @@ const Checkout: React.FC = () => {
                 value={formData.cardName}
                 onChange={handleChange}
                 variant="outlined"
+                error={!!errors.cardName}
+                helperText={errors.cardName}
+                sx={{ 
+                  height: '80px',
+                  width: '250px',
+                  '& .MuiInputBase-root': { height: '56px' }
+                }}
               />
             </Grid2>
             <Grid2>
@@ -82,16 +171,34 @@ const Checkout: React.FC = () => {
                 value={formData.cardNumber}
                 onChange={handleChange}
                 variant="outlined"
+                error={!!errors.cardNumber}
+                helperText={errors.cardNumber}
+                sx={{ 
+                  height: '80px', 
+                  width: '250px',
+                  '& .MuiInputBase-root': { height: '56px' }
+                }}
               />
             </Grid2>
-            <Grid2 >
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>Expiration Month</InputLabel>
+          </Grid2>
+          <Grid2 container spacing={5} marginY={1}>
+            <Grid2>
+              <FormControl 
+                fullWidth 
+                variant="outlined" 
+                error={!!errors.expMonth}
+                sx={{ 
+                  height: '80px',
+                  width: '180px',
+                  '& .MuiInputBase-root': { height: '56px' }
+                }}
+              >
+                <InputLabel>Month</InputLabel>
                 <Select
                   name="expMonth"
                   value={formData.expMonth}
                   onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>)}
-                  label="Expiration Month"
+                  label="Month"
                 >
                   {[...Array(12)].map((_, i) => (
                     <MenuItem key={i + 1} value={i + 1}>
@@ -99,16 +206,30 @@ const Checkout: React.FC = () => {
                     </MenuItem>
                   ))}
                 </Select>
+                {errors.expMonth && (
+                  <Typography color="error" variant="caption" sx={{ ml: 2 }}>
+                    {errors.expMonth}
+                  </Typography>
+                )}
               </FormControl>
             </Grid2>
-            <Grid2 >
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>Expiration Year</InputLabel>
+            <Grid2>
+              <FormControl 
+                fullWidth 
+                variant="outlined" 
+                error={!!errors.expYear}
+                sx={{ 
+                  height: '80px', 
+                  width: '180px', 
+                  '& .MuiInputBase-root': { height: '56px' }
+                }}
+              >
+                <InputLabel>Year</InputLabel>
                 <Select
                   name="expYear"
                   value={formData.expYear}
                   onChange={(e) => handleChange(e as React.ChangeEvent<HTMLInputElement>)}
-                  label="Expiration Year"
+                  label="Year"
                 >
                   {[2024, 2025, 2026, 2027, 2028].map((year) => (
                     <MenuItem key={year} value={year}>
@@ -116,6 +237,11 @@ const Checkout: React.FC = () => {
                     </MenuItem>
                   ))}
                 </Select>
+                {errors.expYear && (
+                  <Typography color="error" variant="caption" sx={{ ml: 2 }}>
+                    {errors.expYear}
+                  </Typography>
+                )}
               </FormControl>
             </Grid2>
             <Grid2>
@@ -128,8 +254,16 @@ const Checkout: React.FC = () => {
                 value={formData.cvv}
                 onChange={handleChange}
                 variant="outlined"
+                error={!!errors.cvv}
+                helperText={errors.cvv}
+                sx={{ 
+                  height: '80px', 
+                  width: '180px', 
+                  '& .MuiInputBase-root': { height: '56px' }
+                }}
               />
             </Grid2>
+          </Grid2>
           </Grid2>
         );
       case 1:
