@@ -24,6 +24,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useUser } from '../../contexts/UserContext';
 import LoginModal from '../users/LoginModal';
+import Logo from '../../../public/logo.svg';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -100,13 +101,23 @@ const Header: React.FC = () => {
             <MenuIcon />
           </IconButton>
 
-          <Typography 
-            variant="h6" 
-            component="div" 
-            sx={{ flexGrow: 1 }}
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              flexGrow: 1 
+            }}
           >
-            Sock Haven
-          </Typography>
+            <img width={50} height={50} src={Logo}alt='Logo' onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+            <Typography 
+              variant="h6" 
+              component="div" 
+              sx={{ ml: 2, cursor: 'pointer' }}
+              onClick={() => navigate('/')}
+            >
+              Sock Haven
+            </Typography>
+          </Box>
 
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {menuItems.map((item) => (

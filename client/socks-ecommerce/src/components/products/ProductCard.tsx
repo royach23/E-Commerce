@@ -38,7 +38,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       color: 'primary',
       padding: 1,
       minWidth: '325px',
-      minHeight: '450px'
+      minHeight: '400px'
       }}
       >
       <CardMedia

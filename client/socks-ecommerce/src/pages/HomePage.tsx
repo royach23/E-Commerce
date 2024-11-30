@@ -8,6 +8,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import ProductCard from '../components/products/ProductCard';
+import SockHavenLogo from '../assets/logo.png';
 import { useProducts } from '../contexts/ProductContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,24 +24,30 @@ const HomePage: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ 
-        my: 4, 
+        mb: 3, 
         textAlign: 'center',
-        py: 4,
-        color: 'primary'
+        py: 3,
+        color: 'primary',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       }}
       >
-        <Typography 
-          variant="h2" 
-          component="h1" 
-          gutterBottom
-          color= 'primary'
-          sx={{ fontWeight: 'bold' }}
-        >
-          Sock Haven
-        </Typography>
+        <Box display={'flex'} gap={5} alignItems={'center'}>
+          <Typography 
+            variant="h2" 
+            component="h1" 
+            gutterBottom
+            color='primary'
+            sx={{ fontWeight: 'bold', mt: 2 }}
+          >
+            Sock Haven
+          </Typography>
+          <img width={150} height={150} src={SockHavenLogo} style={{ borderRadius: '50%'}}/>
+        </Box>
         <Typography 
           variant="h5" 
-          color= 'primary'
+          color='primary'
         >
           Comfort and Style for Your Feet
         </Typography>
