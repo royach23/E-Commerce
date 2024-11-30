@@ -10,7 +10,9 @@ import {
   List, 
   ListItem, 
   ListItemText,
-  Box
+  Box,
+  MenuItem,
+  Menu
 } from '@mui/material';
 import { 
   Menu as MenuIcon, 
@@ -18,7 +20,9 @@ import {
   Home as HomeIcon, 
   Storefront as ProductsIcon,
   Login as LoginIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  AccountCircle as AccountIcon,
+  ReceiptLong as OrderHistoryIcon
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
@@ -29,8 +33,9 @@ import Logo from '../../../public/logo.svg';
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { state: { items: cartItems } } = useCart();
-  const { isAuthenticated, logout } = useUser();
+  const { isAuthenticated, logout, user } = useUser();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -48,6 +53,20 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+    handleMenuClose();
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNavigateToOrderHistory = () => {
+    navigate('/order-history');
+    handleMenuClose();
   };
 
   const menuItems = [
@@ -108,7 +127,7 @@ const Header: React.FC = () => {
               flexGrow: 1 
             }}
           >
-            <img width={50} height={50} src={Logo}alt='Logo' onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+            <img width={50} height={50} src={Logo} alt='Logo' onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
             <Typography 
               variant="h6" 
               component="div" 
@@ -134,13 +153,28 @@ const Header: React.FC = () => {
           </Box>
 
           {isAuthenticated ? (
-            <Button
-              color="inherit"
-              onClick={handleLogout}
-              startIcon={<LogoutIcon />}
-            >
-              Logout
-            </Button>
+            <>
+              <IconButton
+                color="inherit"
+                onClick={handleMenuOpen}
+              >
+                <AccountIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                <MenuItem onClick={handleNavigateToOrderHistory}>
+                  <OrderHistoryIcon sx={{ mr: 1 }} />
+                  Order History
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <LogoutIcon sx={{ mr: 1 }} />
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
           ) : (
             <Button
               color="inherit"

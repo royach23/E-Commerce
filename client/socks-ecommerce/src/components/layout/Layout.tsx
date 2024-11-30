@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import Header from './Header'; 
 import Footer from './Footer'; 
-import { Home, Products, ProductDetail, Cart, Checkout, Register, OrderCompletion } from '../../pages';
+import { Home, Products, ProductDetail, Cart, Checkout, Register, OrderCompletion, OrderHistory } from '../../pages';
 
 const Layout: React.FC = () => {
   return (
@@ -35,6 +35,7 @@ const Layout: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-completion" element={<OrderCompletion />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/order-history" element={<OrderHistory />} />
         </Routes>
       </Container>
 

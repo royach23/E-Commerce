@@ -13,7 +13,7 @@ export const UserService = {
           password: hashedPassword
         };
 
-        const response = await api.post<LoginResponse>('/login', loginPayload);
+        const response = await api.post('/login', loginPayload);
         return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);

@@ -8,17 +8,17 @@
   import { 
     User, 
     LoginCredentials,
-    createUserFromJson, 
   } from '../types/User';
   import UserService from '../api/UserService';
   import { useCart } from './CartContext';
+  import { Transaction } from '../types/Transaction';
 
   interface UserContextType {
     user: User | null;
     login: (credentials: LoginCredentials) => Promise<void>;
     logout: () => void;
     register: (userData: User) => Promise<void>;
-    // getUserTransactions: (userId: number) => Promise<Transaction[]>;
+    getUserTransactions: (userId: number) => Promise<Transaction[]>;
     deleteUser: (userId: number) => Promise<void>;
     updateUser: (userId: number) => Promise<void>;
     isAuthenticated: boolean;
@@ -75,11 +75,11 @@
       setUser(user);
       setIsAuthenticated(true);
     };
-  
-    // const getUserTransactions = async (userId: number): Promise<Transaction[]> => {
-    //   return UserService.getUserTransactions(userId);
-    // };
-  
+
+    const getUserTransactions = async (userId: number): Promise<Transaction[]> => {
+      return await UserService.getUserTransactions(userId);
+    };
+
     const deleteUser = async (userId: number) => {
       await UserService.deleteUser(userId);
       logout();
@@ -95,7 +95,7 @@
         login, 
         logout, 
         register,
-        // getUserTransactions,
+        getUserTransactions,
         deleteUser,
         updateUser,
         isAuthenticated 
