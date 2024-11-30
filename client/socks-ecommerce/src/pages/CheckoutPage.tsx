@@ -307,35 +307,35 @@ const Checkout: React.FC = () => {
       case 1:
         return (
           <Box>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h5" gutterBottom color='primary' fontWeight={'bold'}>
               Order Summary
             </Typography>
             <Grid2 container spacing={2}>
               <Grid2>
-                <Typography variant="subtitle1">
+                <Typography variant="h6" color='primary' fontWeight={'bold'}>
                   Customer Information
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   {user?.first_name} {user?.last_name}
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   {user?.email}
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   {user?.phone_number}
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   {user?.address}
                 </Typography>
               </Grid2>
               <Grid2>
-                <Typography variant="subtitle1">
+                <Typography variant="h6" color='primary' fontWeight={'bold'}>
                   Payment Method
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   {formData.cardName}
                 </Typography>
-                <Typography>
+                <Typography color='primary'>
                   Card ending in {formData.cardNumber.slice(-4)}
                 </Typography>
               </Grid2>
@@ -350,19 +350,20 @@ const Checkout: React.FC = () => {
   return (
     <Container maxWidth="md">
       <Typography 
-        variant="h4" 
+        variant="h3" 
         gutterBottom 
         sx={{ 
           textAlign: 'center', 
           mb: 4 
         }}
+        color='primary' 
       >
         Checkout
       </Typography>
 
       {!isAuthenticated ? (
         <Typography 
-          variant="body1" 
+          variant="h5" 
           align="center" 
           color="error"
           sx={{ mt: 4 }}
@@ -372,9 +373,18 @@ const Checkout: React.FC = () => {
       ) : (
         <>
           <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
+            {steps.map((label, index) => (
+              <Step key={label} >
+                <StepLabel 
+                  sx={{
+                    color: index === activeStep ? "primary" : "text.secondary",
+                    "& .MuiStepLabel-label": {
+                      color: index === activeStep ? "primary" : "text.secondary",
+                    },
+                  }}
+                >
+                  {label}
+                </StepLabel>
               </Step>
             ))}
           </Stepper>

@@ -2,7 +2,7 @@ import React from 'react';
 import { 
   Box, 
   Container, 
-  Grid, 
+  Grid2, 
   Typography, 
   Link, 
   IconButton 
@@ -18,43 +18,40 @@ const Footer: React.FC = () => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: 'background.paper',
+        backgroundColor: 'background.default',
         py: 6,
         borderTop: 1,
         borderColor: 'divider'
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* Company Info */}
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h6" gutterBottom>
+        <Grid2 container spacing={22} >
+          <Grid2>
+            <Typography variant="h6" gutterBottom color='primary'>
               Sock Haven
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color='primary'>
               Premium socks for every occasion. Comfort meets style.
             </Typography>
-          </Grid>
+          </Grid2>
 
-          {/* Quick Links */}
-          <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1" gutterBottom>
+          <Grid2>
+            <Typography variant="subtitle1" gutterBottom color='primary'>
               Quick Links
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Link href="/" color="inherit" underline="hover">Home</Link>
-              <Link href="/products" color="inherit" underline="hover">Products</Link>
-              <Link href="/cart" color="inherit" underline="hover">Cart</Link>
-              <Link href="/checkout" color="inherit" underline="hover">Checkout</Link>
+              <Link href="/" color='primary' underline="hover">Home</Link>
+              <Link href="/products" color='primary' underline="hover">Products</Link>
+              <Link href="/cart" color='primary' underline="hover">Cart</Link>
+              <Link href="/checkout" color='primary' underline="hover">Checkout</Link>
             </Box>
-          </Grid>
+          </Grid2>
 
-          {/* Contact & Social */}
-          <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1" gutterBottom>
+          <Grid2>
+            <Typography variant="subtitle1" gutterBottom color='primary'>
               Connect With Us
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color='primary'>
               Email: support@sockhaven.com
               <br />
               Phone: (555) 123-4567
@@ -70,10 +67,9 @@ const Footer: React.FC = () => {
                 <InstagramIcon />
               </IconButton>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
-        {/* Copyright */}
         <Typography 
           variant="body2" 
           color="text.secondary" 

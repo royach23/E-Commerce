@@ -30,23 +30,25 @@ const Cart: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" >
       <Typography 
-        variant="h4" 
+        variant="h3" 
         gutterBottom 
         sx={{ 
           mb: 4, 
-          textAlign: 'center' 
+          textAlign: 'center', 
         }}
+        color='primary'
       >
         Your Shopping Cart
       </Typography>
 
       {state.items.length === 0 ? (
         <Typography 
-          variant="body1" 
+          variant="h5" 
           align="center"
           sx={{ mt: 4 }}
+          color='primary'
         >
           Your cart is empty
         </Typography>
@@ -64,13 +66,13 @@ const Cart: React.FC = () => {
                 >
                   <Grid2 container alignItems="center" spacing={2}>
                     <Grid2>
-                      <Typography variant="subtitle1">
+                      <Typography variant="subtitle1" color='primary' fontWeight={'bold'}>
                         {item.name}
                       </Typography>
-                      <Typography variant="subtitle2">
+                      <Typography variant="subtitle2" color='primary' fontWeight={'bold'}>
                         {item.size}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" color='primary'>
                         ${item.price.toFixed(2)} each
                       </Typography>
                     </Grid2>
@@ -88,7 +90,7 @@ const Cart: React.FC = () => {
                         >
                           -
                         </Button>
-                        <Typography sx={{ mx: 1 }}>
+                        <Typography sx={{ mx: 1 }} color='primary'>
                           {item.quantity}
                         </Typography>
                         <Button 
@@ -103,7 +105,7 @@ const Cart: React.FC = () => {
                     </Grid2>
                     
                     <Grid2>
-                      <Typography variant="subtitle1">
+                      <Typography variant="subtitle1" color='primary' >
                         ${(item.price * item.quantity).toFixed(2)}
                       </Typography>
                     </Grid2>
@@ -131,10 +133,10 @@ const Cart: React.FC = () => {
             mt: 3, 
             mb: 4 
           }}>
-            <Typography variant="h6">
+            <Typography variant="h6" color='primary'>
               Total
             </Typography>
-            <Typography variant="h6">
+            <Typography variant="h6" color='primary'>
               ${state.total.toFixed(2)}
             </Typography>
           </Box>

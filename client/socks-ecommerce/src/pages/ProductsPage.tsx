@@ -63,7 +63,7 @@ const Products: React.FC = () => {
 
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom color= 'primary'>
         Our Sock Collection
       </Typography>
 
@@ -71,7 +71,7 @@ const Products: React.FC = () => {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
-        my: 3 
+        my: 3
       }}>
         <TextField
           variant="outlined"
@@ -88,7 +88,7 @@ const Products: React.FC = () => {
             )
             }
           }}
-          sx={{ flexGrow: 1, mr: 2 }}
+          sx={{ flexGrow: 1, mr: 2, color: 'primary' }}
         />
 
         <FormControl variant="outlined" sx={{ minWidth: 150, mr: 2 }}>
@@ -106,7 +106,7 @@ const Products: React.FC = () => {
           </Select>
         </FormControl>
 
-        <FormControl variant="outlined" sx={{ minWidth: 150 }}>
+        <FormControl variant="outlined" sx={{ minWidth: 180 }}>
           <InputLabel>Sort By</InputLabel>
           <Select
             value={sortBy}
@@ -129,7 +129,7 @@ const Products: React.FC = () => {
           No products found
         </Typography>
       ) : (
-        <Grid2 container spacing={3}>
+        <Grid2 container spacing={6}>
           {sortedAndFilteredProducts.map((sock) => (
             <Grid2 key={sock.product_id} >
               <ProductCard product={sock} />

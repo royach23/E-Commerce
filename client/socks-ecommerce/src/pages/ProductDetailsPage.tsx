@@ -73,13 +73,13 @@ const ProductDetail: React.FC = () => {
           />
         </Grid2>
         <Grid2>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h3" gutterBottom color='primary'>
             {product.name}
           </Typography>
-          <Typography variant="h6" color="primary">
+          <Typography variant="h5" color="primary">
             ${product.price.toFixed(2)}
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="h6" color='primary'>
             {product.description}
           </Typography>
 
@@ -88,7 +88,7 @@ const ProductDetail: React.FC = () => {
             display: 'flex', 
             gap: 2 
           }}>
-            <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+            <FormControl variant="outlined" sx={{ minWidth: 120 }} color='primary'>
               <InputLabel>Size</InputLabel>
               <Select
                 value={size}

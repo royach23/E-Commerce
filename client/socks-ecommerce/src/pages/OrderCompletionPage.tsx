@@ -27,29 +27,29 @@ const OrderCompletion: React.FC = () => {
         sx={{ fontSize: 100, mb: 3 }} 
       />
       
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom color='primary'>
         Order Completed Successfully!
       </Typography>
       
       <Box sx={{ 
-        bgcolor: 'background.paper', 
+        bgcolor: 'primary.light', 
         p: 3, 
         borderRadius: 2, 
         boxShadow: 1,
         width: '100%',
         mb: 3 
       }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom color='primary'>
           Order Summary
         </Typography>
         
-        <Typography variant="body1">
+        <Typography variant="body1" color='primary'>
           Order Number: {orderDetails.orderId || 'N/A'}
         </Typography>
-        <Typography variant="body1">
+        <Typography variant="body1" color='primary'>
           Total Amount: ${orderDetails.total?.toFixed(2) || 'N/A'}
         </Typography>
-        <Typography variant="body1">
+        <Typography variant="body1" color='primary'>
           Estimated Delivery: {orderDetails.estimatedDelivery || 'Within 5-7 business days'}
         </Typography>
       </Box>

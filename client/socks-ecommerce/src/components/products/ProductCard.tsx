@@ -32,23 +32,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card 
+      sx={{    
+      backgroundColor: 'primary.light', 
+      color: 'primary',
+      padding: 1,
+      minWidth: '325px',
+      minHeight: '450px'
+      }}
+      >
       <CardMedia
         component="img"
         height="250"
         image={product.image}
         alt={product.name}
         onClick={() => navigate(`/product/${product.product_id}`)}
-        sx={{cursor: 'pointer'}}
-/>
+        sx={{cursor: 'pointer', borderRadius: 1}}
+      />
       <CardContent 
         onClick={() => navigate(`/product/${product.product_id}`)}
-        sx={{ cursor: 'pointer', pb: 0}}
+        sx={{ cursor: 'pointer', pb: 0 }}
       >
-        <Typography gutterBottom variant="h5">
+        <Typography gutterBottom variant="h5" fontWeight={'bold'} color="primary">
           {product.name}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="primary">
           {product.description}
         </Typography>
         <Typography variant="h6" color="primary">
@@ -59,6 +67,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <Button 
           size="large" 
           color="primary" 
+          sx={{fontWeight: 'bold', fontSize: '20px'}}
           onClick={handleAddToCart}
           disabled={!product.in_stock}
         >

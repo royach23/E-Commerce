@@ -25,19 +25,22 @@ const HomePage: React.FC = () => {
       <Box sx={{ 
         my: 4, 
         textAlign: 'center',
-        py: 4 
-      }}>
+        py: 4,
+        color: 'primary'
+      }}
+      >
         <Typography 
           variant="h2" 
           component="h1" 
           gutterBottom
+          color= 'primary'
           sx={{ fontWeight: 'bold' }}
         >
           Sock Haven
         </Typography>
         <Typography 
-          variant="subtitle1" 
-          color="text.secondary"
+          variant="h5" 
+          color= 'primary'
         >
           Comfort and Style for Your Feet
         </Typography>
@@ -45,7 +48,7 @@ const HomePage: React.FC = () => {
 
       <Grid2 container spacing={3} justifyContent="center">
         {featuredSocks.map((sock) => (
-          <Grid2 key={sock.id}>
+          <Grid2 key={sock.product_id}>
             <ProductCard
               product={sock}
             />

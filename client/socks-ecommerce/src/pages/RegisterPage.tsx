@@ -131,16 +131,17 @@ const RegisterPage: React.FC = () => {
           marginTop: 8, 
           display: 'flex', 
           flexDirection: 'column', 
-          alignItems: 'center' 
+          alignItems: 'center', 
         }}
       >
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h3" color='primary'>
           Register
         </Typography>
         <Box 
           component="form" 
           onSubmit={handleSubmit} 
           sx={{ mt: 3, width: '100%' }}
+          color='primary'
         >
           <TextField
             margin="normal"

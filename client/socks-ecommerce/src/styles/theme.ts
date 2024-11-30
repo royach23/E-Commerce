@@ -3,21 +3,22 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#2196f3', // Material Blue
-      light: '#64b5f6',
+      main: '#c94401', //orange
+      light: '#fecd95', //product card orange
       dark: '#1976d2'
     },
     secondary: {
-      main: '#f50057', // Material Pink
-      light: '#ff4081',
+      main: '#1B1833', //blue
+      light: '#F7C566',
       dark: '#c51162'
     },
     background: {
-      default: '#f4f4f4'
+      default: '#fee7be' //yellow
     }
   },
   typography: {
     fontFamily: [
+      'Sour Gummy',
       'Roboto',
       '-apple-system',
       'BlinkMacSystemFont',
@@ -26,6 +27,7 @@ export const theme = createTheme({
       'sans-serif'
     ].join(','),
   },
+  
   components: {
     MuiButton: {
       styleOverrides: {

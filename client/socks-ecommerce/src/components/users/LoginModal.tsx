@@ -102,11 +102,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
         '& .MuiDialog-paper': {
           width: '30vw',
           height: '42vh',
-          maxWidth: 'none'
+          maxWidth: 'none',
+          backgroundColor: 'background.default'
         }
       }}
     >
-      <DialogTitle fontSize={30}>Sign In</DialogTitle>
+      <DialogTitle fontSize={40} color='primary'>Sign In</DialogTitle>
       <DialogContent sx={{pb: '0'}}>
         <TextField
           autoFocus
@@ -114,6 +115,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
           label="Username"
           name="username"
           type="username"
+          color='primary'
           fullWidth
           value={credentials.username}
           onChange={handleChange}
@@ -136,13 +138,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
         {errors.submit && <p style={{ color: 'red' }}>{errors.submit}</p>}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleRegister} color="primary">
+        <Button onClick={handleRegister} color="primary" size='large'>
           Register
         </Button>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="primary" size='large'>
           Cancel
         </Button>
-        <Button onClick={handleLogin} color="primary">
+        <Button onClick={handleLogin} color="primary" size='large'>
           Sign In
         </Button>
       </DialogActions>
