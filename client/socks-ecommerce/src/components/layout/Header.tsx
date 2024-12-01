@@ -28,7 +28,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useUser } from '../../contexts/UserContext';
 import LoginModal from '../users/LoginModal';
-import Logo from '../../../public/logo.svg';
+import Logo from '../../assets/logo.svg';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);

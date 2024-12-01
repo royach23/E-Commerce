@@ -377,9 +377,9 @@ const Checkout: React.FC = () => {
               <Step key={label} >
                 <StepLabel 
                   sx={{
-                    color: index === activeStep ? "primary" : "text.secondary",
+                    color: index === activeStep ? "primary.main" : "text.secondary",
                     "& .MuiStepLabel-label": {
-                      color: index === activeStep ? "primary" : "text.secondary",
+                      color: index === activeStep ? "primary.main" : "text.secondary",
                     },
                   }}
                 >
