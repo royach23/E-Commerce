@@ -147,7 +147,11 @@ const Header: React.FC = () => {
                 startIcon={item.icon}
                 component={RouterLink}
                 to={item.path}
-                sx={{mx: 1, fontSize: '1.4em', }}
+                sx={{mx: 1, fontSize: '1.4em',   
+                  '&:hover': {
+                  color: 'secondary.main',
+                  boxShadow: 'none',
+                }, }}
                 >
                 {item.text}
               </Button>
@@ -159,7 +163,11 @@ const Header: React.FC = () => {
               <IconButton
                 color="inherit"
                 onClick={handleMenuOpen}
-                sx={{mx: 1}}
+                sx={{mx: 1, fontSize: '1.4em', 
+                  '&:hover': {
+                    color: 'secondary.main',
+                    boxShadow: 'none',
+                  },}}
               >
                 <AccountIcon sx={{fontSize: '1.4em'}} />
               </IconButton>
@@ -174,6 +182,7 @@ const Header: React.FC = () => {
                     backgroundColor: "primary.light",
                   },
                 }}
+                
               >
                 <MenuItem onClick={handleNavigateToOrderHistory} sx={{color: 'primary.main', fontSize: '1.2em'}}>
                   <OrderHistoryIcon sx={{ mr: 1, fontSize: '1.2em'}} />
@@ -190,7 +199,11 @@ const Header: React.FC = () => {
               color="inherit"
               startIcon={<LoginIcon />}
               onClick={handleOpenLoginModal}
-              sx={{mx: 1, fontSize: '1.4em'}}
+              sx={{mx: 1, fontSize: '1.4em', 
+                '&:hover': {
+                  color: 'secondary.main',
+                  boxShadow: 'none',
+                },}}
             >
               Login
             </Button>
@@ -199,7 +212,11 @@ const Header: React.FC = () => {
           <IconButton 
             color="inherit"
             onClick={() => navigate('/cart')}
-            sx={{ml: 1, mr: 2}}
+            sx={{ml: 1, mr: 2, fontSize: '1.4em', 
+              '&:hover': {
+                color: 'secondary.main',
+                boxShadow: 'none',
+              },}}
           >
             <Badge 
               badgeContent={cartItems.length} 
