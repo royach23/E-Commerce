@@ -72,45 +72,46 @@ const OrderHistoryPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom color='primary'>
         Order History
       </Typography>
 
       {transactions.length === 0 ? (
-        <Typography variant="body1">No orders found.</Typography>
+        <Typography variant="body1" color='primary'>No orders found.</Typography>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{backgroundColor: 'primary.light'}}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Order ID</TableCell>
-                <TableCell>Purchase Date</TableCell>
-                <TableCell>Total Price</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Items</TableCell>
+              <TableRow sx={{textAlign: 'center'}}>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Order ID</TableCell>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Purchase Date</TableCell>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Total Price</TableCell>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Status</TableCell>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Items</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {transactions.map((transaction) => (
                 <TableRow key={transaction.transactionId}>
-                  <TableCell>#{transaction.transactionId}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>#{transaction.transactionId}</TableCell>
+                  <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>
                     {new Date(transaction.purchaseTime).toLocaleDateString()}
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>
                     ${transaction.cart?.total.toFixed(2)}
                   </TableCell>
                   <TableCell>
                     <Chip 
                       label={transaction.orderStatus} 
                       color={getStatusColor(transaction.orderStatus)} 
-                      size="small" 
+                      size="small"
+                      sx={{textAlign: 'center', width: '100%', fontSize: '1.2em'}} 
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{color: 'primary.main', textAlign: 'center'}}>
                     {transaction.cart?.items?.map((item) => (
-                      <Box key={item.product_id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="body2">
+                      <Box key={item.product_id} sx={{ display: 'flex', alignItems: 'center', mb: 1, textAlign: 'center' }}>
+                        <Typography variant="body1" sx={{textAlign: 'center', width: '100%', fontSize: '1.2em'}}>
                           {item.name} (x{item.quantity}) - {item.size}
                         </Typography>
                       </Box>
