@@ -8,7 +8,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import ProductCard from '../components/products/ProductCard';
-import SockHavenLogo from '../assets/logo.png';
+import SockHavenLogo from '../assets/logoNoBg.png';
 import { useProducts } from '../contexts/ProductContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
           >
             Sock Haven
           </Typography>
-          <img width={150} height={150} src={SockHavenLogo} style={{ borderRadius: '50%'}}/>
+          <img width={160} height={160} src={SockHavenLogo} style={{ borderRadius: '50%'}}/>
         </Box>
         <Typography 
           variant="h5" 
