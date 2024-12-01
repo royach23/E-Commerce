@@ -43,7 +43,6 @@ const Footer: React.FC = () => {
               <Link href="/" color='primary' underline="hover">Home</Link>
               <Link href="/products" color='primary' underline="hover">Products</Link>
               <Link href="/cart" color='primary' underline="hover">Cart</Link>
-              <Link href="/checkout" color='primary' underline="hover">Checkout</Link>
             </Box>
           </Grid2>
 
