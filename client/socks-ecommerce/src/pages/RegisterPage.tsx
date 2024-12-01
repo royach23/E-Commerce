@@ -18,10 +18,10 @@ const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState<User>({
     username: '',
     password: '',
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
     address: '',
-    phone_number: '',
+    phoneNumber: '',
     email: ''
   });
   const [errors, setErrors] = useState<ValidationErrors>({});
@@ -53,19 +53,19 @@ const RegisterPage: React.FC = () => {
         if (!emailRegex.test(value)) return 'Please enter a valid email address';
         return ''; }
 
-      case 'first_name':
+      case 'firstName':
         if (!value) return 'First name is required';
         if (value.length < 2) return 'First name must be at least 2 characters long';
         if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
 
-      case 'last_name':
+      case 'lastName':
         if (!value) return 'Last name is required';
         if (value.length < 2) return 'Last name must be at least 2 characters long';
         if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
 
-      case 'phone_number':
+      case 'phoneNumber':
         { if (!value) return 'Phone number is required';
         const phoneRegex = /^\+?[\d\s()-]{10,15}$/;
         if (!phoneRegex.test(value)) return 'Please enter a valid phone number';
@@ -183,22 +183,22 @@ const RegisterPage: React.FC = () => {
             required
             fullWidth
             label="First Name"
-            name="first_name"
-            value={formData.first_name}
+            name="firstName"
+            value={formData.firstName}
             onChange={handleChange}
-            error={!!errors.first_name}
-            helperText={errors.first_name}
+            error={!!errors.firstName}
+            helperText={errors.firstName}
           />
           <TextField
             margin="normal"
             required
             fullWidth
             label="Last Name"
-            name="last_name"
-            value={formData.last_name}
+            name="lastName"
+            value={formData.lastName}
             onChange={handleChange}
-            error={!!errors.last_name}
-            helperText={errors.last_name}
+            error={!!errors.lastName}
+            helperText={errors.lastName}
           />
           <TextField
             margin="normal"
@@ -216,11 +216,11 @@ const RegisterPage: React.FC = () => {
             required
             fullWidth
             label="Phone Number"
-            name="phone_number"
-            value={formData.phone_number}
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
-            error={!!errors.phone_number}
-            helperText={errors.phone_number}
+            error={!!errors.phoneNumber}
+            helperText={errors.phoneNumber}
           />
           {errors.submit && <Typography color="error">{errors.submit}</Typography>}
           <Button

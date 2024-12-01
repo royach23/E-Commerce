@@ -15,10 +15,10 @@ export interface Transaction {
     purchase_time: string;
     total_price: number;
     order_status: string;
-    transaction_products: TransactionProduct[];
+    transaction_products: JsonTransactionProduct[];
   }
   
-  interface TransactionProduct {
+  interface JsonTransactionProduct {
     quantity: number;
     size: string;
     transaction_id: number;

@@ -2,10 +2,10 @@ export interface User{
     id?: number;
     username: string;
     password?: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     address: string;
-    phone_number: string;
+    phoneNumber: string;
     email: string;
   }
   
@@ -35,10 +35,10 @@ export interface User{
     const formattedUser: User = {
       id: jsonData.user_id,
       username: jsonData.username,
-      first_name: jsonData.first_name,
-      last_name: jsonData.last_name,
+      firstName: jsonData.first_name,
+      lastName: jsonData.last_name,
       address: jsonData.address,
-      phone_number: jsonData.phone_number[0] || "",
+      phoneNumber: jsonData.phone_number[0] || "",
       email: jsonData.email,
     };
 

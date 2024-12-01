@@ -39,6 +39,9 @@ export const UserService = {
           const userDataWithHashedPassword = {
             ...userData,
             password: hashedPassword,
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            phone_number: userData.phoneNumber,
           };
 
           const response = await api.post('/user', userDataWithHashedPassword);

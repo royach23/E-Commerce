@@ -316,13 +316,13 @@ const Checkout: React.FC = () => {
                   Customer Information
                 </Typography>
                 <Typography color='primary'>
-                  {user?.first_name} {user?.last_name}
+                  {user?.firstName} {user?.lastName}
                 </Typography>
                 <Typography color='primary'>
                   {user?.email}
                 </Typography>
                 <Typography color='primary'>
-                  {user?.phone_number}
+                  {user?.phoneNumber}
                 </Typography>
                 <Typography color='primary'>
                   {user?.address}
