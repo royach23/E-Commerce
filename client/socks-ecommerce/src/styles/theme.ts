@@ -18,7 +18,7 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: [
-      'Sour Gummy',
+      'Parkinsans',
       'Roboto',
       '-apple-system',
       'BlinkMacSystemFont',

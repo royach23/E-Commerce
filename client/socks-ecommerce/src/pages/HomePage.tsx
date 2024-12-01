@@ -26,7 +26,7 @@ const HomePage: React.FC = () => {
       <Box sx={{ 
         mb: 3, 
         textAlign: 'center',
-        py: 3,
+        py: 2,
         color: 'primary',
         display: 'flex',
         flexDirection: 'column',
