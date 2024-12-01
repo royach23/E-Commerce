@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api/api';
 import { User, LoginCredentials, LoginResponse, createUserFromJson } from '../types/User';
 import SecurityUtils from '../utils/Security';
 import { mapJsonToTransactions, Transaction } from '../types/Transaction';

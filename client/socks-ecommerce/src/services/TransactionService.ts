@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../api/api';
 import { Transaction, mapJsonToTransaction } from '../types/Transaction';
 import { CartItem } from '../types/Cart';
 

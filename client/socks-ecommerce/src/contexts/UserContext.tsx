@@ -9,7 +9,7 @@
     User, 
     LoginCredentials,
   } from '../types/User';
-  import UserService from '../api/UserService';
+  import UserService from '../services/UserService';
   import { useCart } from './CartContext';
   import { Transaction } from '../types/Transaction';
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Transaction } from '../types/Transaction';
-import TransactionService from '../api/TransactionService';
+import TransactionService from '../services/TransactionService';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
-import UserService from '../api/UserService';
+import UserService from '../services/UserService';
 
 export const useTransaction = () => {
   const [isLoading, setIsLoading] = useState(false);

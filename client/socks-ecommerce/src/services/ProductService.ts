@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Product } from '../types/Product';
-import api, { BASE_URL } from './api'
+import api, { BASE_URL } from '../api/api'
 
 const Product_URL = `${BASE_URL}/product`;
 
