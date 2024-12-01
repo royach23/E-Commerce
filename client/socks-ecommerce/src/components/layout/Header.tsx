@@ -35,7 +35,7 @@ const Header: React.FC = () => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { state: { items: cartItems } } = useCart();
-  const { isAuthenticated, logout, user } = useUser();
+  const { isAuthenticated, logout } = useUser();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -94,6 +94,7 @@ const Header: React.FC = () => {
             key={item.text} 
             component={RouterLink} 
             to={item.path}
+            sx={{color: 'primary.main'}}
           >
             {item.icon}
             <ListItemText 
@@ -108,7 +109,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <IconButton
             color="inherit"
@@ -127,9 +128,9 @@ const Header: React.FC = () => {
               flexGrow: 1 
             }}
           >
-            <img width={50} height={50} src={Logo} alt='Logo' onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
+            <img width={70} height={70} src={Logo} alt='Logo' onClick={() => navigate('/')} style={{cursor: 'pointer'}} />
             <Typography 
-              variant="h6" 
+              variant="h4" 
               component="div" 
               sx={{ ml: 2, cursor: 'pointer' }}
               onClick={() => navigate('/')}
@@ -146,7 +147,8 @@ const Header: React.FC = () => {
                 startIcon={item.icon}
                 component={RouterLink}
                 to={item.path}
-              >
+                sx={{mx: 1, fontSize: '1.4em', }}
+                >
                 {item.text}
               </Button>
             ))}
@@ -157,20 +159,28 @@ const Header: React.FC = () => {
               <IconButton
                 color="inherit"
                 onClick={handleMenuOpen}
+                sx={{mx: 1}}
               >
-                <AccountIcon />
+                <AccountIcon sx={{fontSize: '1.4em'}} />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                MenuListProps={{
+                  sx: {
+                    backgroundColor: "primary.light",
+                  },
+                }}
               >
-                <MenuItem onClick={handleNavigateToOrderHistory}>
-                  <OrderHistoryIcon sx={{ mr: 1 }} />
+                <MenuItem onClick={handleNavigateToOrderHistory} sx={{color: 'primary.main', fontSize: '1.2em'}}>
+                  <OrderHistoryIcon sx={{ mr: 1, fontSize: '1.2em'}} />
                   Order History
                 </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <LogoutIcon sx={{ mr: 1 }} />
+                <MenuItem onClick={handleLogout} sx={{color: 'primary.main', fontSize: '1.2em'}}>
+                  <LogoutIcon sx={{ mr: 1, fontSize: '1.4em'}} />
                   Logout
                 </MenuItem>
               </Menu>
@@ -180,6 +190,7 @@ const Header: React.FC = () => {
               color="inherit"
               startIcon={<LoginIcon />}
               onClick={handleOpenLoginModal}
+              sx={{mx: 1, fontSize: '1.4em'}}
             >
               Login
             </Button>
@@ -188,12 +199,13 @@ const Header: React.FC = () => {
           <IconButton 
             color="inherit"
             onClick={() => navigate('/cart')}
+            sx={{ml: 1, mr: 2}}
           >
             <Badge 
               badgeContent={cartItems.length} 
               color="secondary"
             >
-              <CartIcon />
+              <CartIcon sx={{fontSize: '1.4em'}} />
             </Badge>
           </IconButton>
         </Toolbar>
@@ -209,7 +221,7 @@ const Header: React.FC = () => {
         }}
         sx={{
           display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 250 },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 250, backgroundColor: 'primary.light' },
         }}
       >
         {drawer}
