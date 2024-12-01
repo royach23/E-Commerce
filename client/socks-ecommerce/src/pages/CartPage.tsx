@@ -61,10 +61,10 @@ const Cart: React.FC = () => {
                   sx={{ 
                     py: 2, 
                     px: 0, 
-                    alignItems: 'center' 
+                    alignItems: 'center'
                   }}
                 >
-                  <Grid2 container alignItems="center" spacing={2}>
+                  <Grid2 container alignItems="center" spacing={2} gap={5}>
                     <Grid2>
                       <Typography variant="subtitle1" color='primary' fontWeight={'bold'}>
                         {item.name}
@@ -117,7 +117,7 @@ const Cart: React.FC = () => {
                         onClick={() => removeFromCart(item.productId, item.size)}
                         color="error"
                       >
-                        <DeleteIcon />
+                        <DeleteIcon sx={{fontSize: '1.4em'}} />
                       </IconButton>
                     </Grid2>
                   </Grid2>
