@@ -97,12 +97,21 @@ const Products: React.FC = () => {
             value={category}
             onChange={handleCategoryChange}
             label="Category"
+            inputProps={{
+              MenuProps: {
+                  MenuListProps: {
+                      sx: {
+                          backgroundColor: 'primary.light'
+                      }
+                  }
+              }
+          }}
           >
-            <MenuItem value="all">All Socks</MenuItem>
-            <MenuItem value="Casual">Casual</MenuItem>
-            <MenuItem value="Sports">Sports</MenuItem>
-            <MenuItem value="Winter">Winter</MenuItem>
-            <MenuItem value="Formal">Formal</MenuItem>
+            <MenuItem value="all" sx={{color: 'primary.main'}}>All Socks</MenuItem>
+            <MenuItem value="Casual" sx={{color: 'primary.main'}}>Casual</MenuItem>
+            <MenuItem value="Sports" sx={{color: 'primary.main'}}>Sports</MenuItem>
+            <MenuItem value="Winter" sx={{color: 'primary.main'}}>Winter</MenuItem>
+            <MenuItem value="Formal" sx={{color: 'primary.main'}}>Formal</MenuItem>
           </Select>
         </FormControl>
 
@@ -112,10 +121,19 @@ const Products: React.FC = () => {
             value={sortBy}
             onChange={handleSortChange}
             label="Sort By"
+            inputProps={{
+              MenuProps: {
+                  MenuListProps: {
+                      sx: {
+                          backgroundColor: 'primary.light'
+                      }
+                  }
+              }
+          }}
           >
-            <MenuItem value="featured">Featured</MenuItem>
-            <MenuItem value="pricelow">Price: Low to High</MenuItem>
-            <MenuItem value="pricehigh">Price: High to Low</MenuItem>
+            <MenuItem value="featured" sx={{color: 'primary.main'}}>Featured</MenuItem>
+            <MenuItem value="pricelow" sx={{color: 'primary.main'}}>Price: Low to High</MenuItem>
+            <MenuItem value="pricehigh" sx={{color: 'primary.main'}}>Price: High to Low</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -125,7 +143,7 @@ const Products: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : sortedAndFilteredProducts.length === 0 ? (
-        <Typography variant="body1" align="center" sx={{ mt: 4 }}>
+        <Typography variant="body1" align="center" color='primary' sx={{ mt: 4 }}>
           No products found
         </Typography>
       ) : (
