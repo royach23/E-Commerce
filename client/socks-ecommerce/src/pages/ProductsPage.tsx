@@ -149,7 +149,7 @@ const Products: React.FC = () => {
       ) : (
         <Grid2 container spacing={6}>
           {sortedAndFilteredProducts.map((sock) => (
-            <Grid2 key={sock.product_id} >
+            <Grid2 key={sock.productId} >
               <ProductCard product={sock} />
             </Grid2>
           ))}

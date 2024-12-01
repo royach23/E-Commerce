@@ -56,7 +56,7 @@ const Cart: React.FC = () => {
         <Box>
           <List>
             {state.items.map((item) => (
-              <React.Fragment key={item.product_id}>
+              <React.Fragment key={item.productId}>
                 <ListItem 
                   sx={{ 
                     py: 2, 
@@ -85,7 +85,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.product_id, item.size, Math.max(1, item.quantity - 1))}
+                          onClick={() => updateQuantity(item.productId, item.size, Math.max(1, item.quantity - 1))}
                           sx={{ minWidth: 40, mr: 1 }}
                         >
                           -
@@ -96,7 +96,7 @@ const Cart: React.FC = () => {
                         <Button 
                           variant="outlined" 
                           size="small"
-                          onClick={() => updateQuantity(item.product_id, item.size, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
                           sx={{ minWidth: 40, ml: 1 }}
                         >
                           +
@@ -114,7 +114,7 @@ const Cart: React.FC = () => {
                       <IconButton 
                         edge="end" 
                         aria-label="delete"
-                        onClick={() => removeFromCart(item.product_id, item.size)}
+                        onClick={() => removeFromCart(item.productId, item.size)}
                         color="error"
                       >
                         <DeleteIcon />

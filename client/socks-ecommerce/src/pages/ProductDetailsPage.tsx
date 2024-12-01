@@ -19,7 +19,7 @@ import { useCart } from '../contexts/CartContext';
 
 const ProductDetail: React.FC = () => {
   const { products, loading, error } = useProducts();
-  const { product_id } = useParams<{ product_id: string }>();
+  const { productId } = useParams<{ productId: string }>();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [size, setSize] = useState('M');
@@ -27,10 +27,10 @@ const ProductDetail: React.FC = () => {
 
   useEffect(() => {
     const foundProduct = products.find(
-      (p) => p.product_id == parseInt(product_id || '0')
+      (p) => p.productId == parseInt(productId || '0')
     );
     setProduct(foundProduct || null);
-  }, [product_id, products]);
+  }, [productId, products]);
 
   const handleSizeChange = (event: SelectChangeEvent) => {
     setSize(event.target.value);
@@ -56,8 +56,8 @@ const ProductDetail: React.FC = () => {
   };
 
   if (loading) return <CircularProgress />;
-  if (error) return <Typography color="error">{error}</Typography>;
-  if (!product) return <Typography>Product not found</Typography>;
+  if (error) return <Typography variant="h5" align="center" color="error" sx={{ mt: 4 }}>{error}</Typography>;
+  if (!product) return <Typography variant="h5" align="center" color="error" sx={{ mt: 4 }}>Product not found</Typography>;
 
   return (
     <Container maxWidth="lg">
@@ -126,9 +126,9 @@ const ProductDetail: React.FC = () => {
             color="primary" 
             size="large" 
             onClick={handleAddToCart}
-            disabled={!product.in_stock}
+            disabled={!product.inStock}
           >
-            {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
+            {product.inStock ? 'Add to Cart' : 'Out of Stock'}
           </Button>
         </Grid2>
       </Grid2>

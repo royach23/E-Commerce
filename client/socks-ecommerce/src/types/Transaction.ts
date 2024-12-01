@@ -1,5 +1,5 @@
 import { CartState } from "./Cart";
-import { Product } from "./Product";
+import { ProductJson } from "./Product";
 
 export interface Transaction {
     cart?: CartState;
@@ -23,7 +23,7 @@ export interface Transaction {
     size: string;
     transaction_id: number;
     product_id: number;
-    product: Product;
+    product: ProductJson;
   }
 
   export const mapJsonToTransactions =(jsonResponse: JsonResponse[]): Transaction[] => {
@@ -41,14 +41,14 @@ export interface Transaction {
         items: jsonResponse.transaction_products?.map((productEntry) => ({
           quantity: productEntry.quantity,
           size: productEntry.size,
-          product_id: productEntry.product.product_id,
+          productId: productEntry.product.product_id,
           name: productEntry.product.name,
           price: productEntry.product.price,
           description: productEntry.product.description,
           image: productEntry.product.image,
           category: productEntry.product.category,
           sizes: productEntry.product.sizes,
-          in_stock: productEntry.product.in_stock,
+          inStock: productEntry.product.in_stock,
         })),
       },
     };

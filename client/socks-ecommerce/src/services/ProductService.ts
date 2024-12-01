@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Product } from '../types/Product';
+import { Product, mapProductsJsonToProduct } from '../types/Product';
 import api, { BASE_URL } from '../api/api'
 
 const Product_URL = `${BASE_URL}/product`;
@@ -8,7 +8,7 @@ export const ProductService = {
   async getAllProducts(): Promise<Product[]> {
     try {
       const response = await api.get(`${Product_URL}s`);
-      return response.data;
+      return mapProductsJsonToProduct(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;
@@ -18,7 +18,7 @@ export const ProductService = {
   async searchProducts(searchTerm: string): Promise<Product[]> {
     try {
       const response = await api.get(`${Product_URL}/search/${searchTerm}`);
-      return response.data;
+      return mapProductsJsonToProduct(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 404) {

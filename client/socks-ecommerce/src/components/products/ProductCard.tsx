@@ -46,11 +46,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         height="250"
         image={product.image}
         alt={product.name}
-        onClick={() => navigate(`/product/${product.product_id}`)}
+        onClick={() => navigate(`/product/${product.productId}`)}
         sx={{cursor: 'pointer', borderRadius: 1}}
       />
       <CardContent 
-        onClick={() => navigate(`/product/${product.product_id}`)}
+        onClick={() => navigate(`/product/${product.productId}`)}
         sx={{ cursor: 'pointer', pb: 0 }}
       >
         <Typography gutterBottom variant="h5" fontWeight={'bold'} color="primary">
@@ -69,9 +69,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           color="primary" 
           sx={{fontWeight: 'bold', fontSize: '20px'}}
           onClick={handleAddToCart}
-          disabled={!product.in_stock}
+          disabled={!product.inStock}
         >
-          {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
+          {product.inStock ? 'Add to Cart' : 'Out of Stock'}
         </Button>
       </CardActions>
     </Card>

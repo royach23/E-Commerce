@@ -17,7 +17,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_TO_CART':
       { const existingItemIndex = state.items.findIndex(
-        item => item.product_id === action.payload.product_id && item.size === action.payload.size
+        item => item.productId === action.payload.productId && item.size === action.payload.size
       );
 
       if (existingItemIndex > -1) {
@@ -44,13 +44,13 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
     case 'REMOVE_FROM_CART':
       { const itemToRemove = state.items.find(
-        item => item.product_id === action.payload.id && item.size === action.payload.size
+        item => item.productId === action.payload.id && item.size === action.payload.size
       );
 
       newState = {
         ...state,
         items: state.items.filter(
-          item => !(item.product_id === action.payload.id && item.size === action.payload.size)
+          item => !(item.productId === action.payload.id && item.size === action.payload.size)
         ),
         total: state.total - (itemToRemove?.price || 0) * (itemToRemove?.quantity || 0)
       };
@@ -61,12 +61,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       newState = {
         ...state,
         items: state.items.map(item =>
-          item.product_id === action.payload.id && item.size === action.payload.size
+          item.productId === action.payload.id && item.size === action.payload.size
             ? { ...item, quantity: action.payload.quantity }
             : item
         ),
         total: state.items.reduce((total, item) => 
-          item.product_id === action.payload.id && item.size === action.payload.size
+          item.productId === action.payload.id && item.size === action.payload.size
             ? total + item.price * action.payload.quantity
             : total + item.price * item.quantity
         , 0)

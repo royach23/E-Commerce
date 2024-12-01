@@ -110,7 +110,7 @@ const OrderHistoryPage: React.FC = () => {
                   </TableCell>
                   <TableCell sx={{color: 'primary.main', textAlign: 'center'}}>
                     {transaction.cart?.items?.map((item) => (
-                      <Box key={item.product_id} sx={{ display: 'flex', alignItems: 'center', mb: 1, textAlign: 'center' }}>
+                      <Box key={item.productId} sx={{ display: 'flex', alignItems: 'center', mb: 1, textAlign: 'center' }}>
                         <Typography variant="body1" sx={{textAlign: 'center', width: '100%', fontSize: '1.2em'}}>
                           {item.name} (x{item.quantity}) - {item.size}
                         </Typography>

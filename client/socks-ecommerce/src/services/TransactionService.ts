@@ -21,7 +21,7 @@ export const TransactionService = {
     async createNewTransactionProduct(product: CartItem, transactionId: number): Promise<Transaction> {
         try {
           const payload = {
-            product_id: product.product_id,
+            product_id: product.productId,
             quantity: product.quantity,
             size: product.size
           };
