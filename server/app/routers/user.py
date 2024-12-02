@@ -55,9 +55,9 @@ async def delete(user_id:int, db: Session = Depends(get_db), current_user: dict 
         raise e
 
 @router.put(path + "/{user_id}", tags=['users'])
-async def update(user_id:int, current_user: dict = Depends(userCrud.get_current_user), db: Session = Depends(get_db)):
+async def update(user_id:int, user: Users, current_user: dict = Depends(userCrud.get_current_user), db: Session = Depends(get_db)):
     try:
-        return await userCrud.update(user_id, current_user, db)
+        return await userCrud.update(user_id, user, current_user, db)
     except Exception as e:
         logger.error(e)
         raise e

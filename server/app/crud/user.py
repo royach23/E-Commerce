@@ -1,5 +1,5 @@
+from ..schemas.user import Users
 from ..models.user import User
-from ..models.loginUser import LoginUser
 from ..models.userDetails import UserDetails
 from fastapi import HTTPException, status, Response
 from ..utils import security
@@ -70,13 +70,17 @@ async def deleteUser(user_id: int, current_user, db):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-async def update(user_id: int, user, db):
+async def update(user_id: int, user: Users, authorized_user, db):
     updated_user = db.query(User).filter(User.user_id == user_id)
     result = updated_user.first()
     if result == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with such id: {user_id} does not exist')
+    if updated_user.username != authorized_user['sub']:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"unauthorized action")
     else:
-        updated_user.update(user.dict(), synchronize_session=False)
+        new_user_details = User(**user.model_dump())
+        new_user_details.password = security.hash_password(new_user_details.password)
+        updated_user.update(new_user_details.model_dump(), synchronize_session=False)
         db.commit()
     return updated_user.first()
 
