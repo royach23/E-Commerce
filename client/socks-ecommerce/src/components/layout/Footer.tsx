@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
             <Typography variant="body2" color='primary'>
               Email: support@sockhaven.com
               <br />
-              Phone: (555) 123-4567
+              Phone: +972-50-123-4567
             </Typography>
             <Box sx={{ mt: 2 }}>
               <IconButton color="primary" aria-label="Facebook">
