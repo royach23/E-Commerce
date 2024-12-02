@@ -80,6 +80,8 @@ async def update(user_id: int, user: Users, authorized_user, db):
     else:
         new_user_details = User(**user.model_dump())
         new_user_details.password = security.hash_password(new_user_details.password)
+        new_user_details.user_id = user_id
+        new_user_details.username = updated_user.username
         updated_user.update(new_user_details.model_dump(), synchronize_session=False)
         db.commit()
     return updated_user.first()
