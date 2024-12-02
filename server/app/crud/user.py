@@ -82,8 +82,9 @@ async def update(user_id: int, user: Users, authorized_user, db):
         new_user_details.password = security.hash_password(new_user_details.password)
         new_user_details.user_id = user_id
         new_user_details.username = updated_user.username
-        updated_user.update(new_user_details.model_dump(), synchronize_session=False)
+        updated_user.update(new_user_details.dict(), synchronize_session=False)
         db.commit()
+               
     return updated_user.first()
 
 def get_current_user(token: str = Depends(oauth2_scheme)):

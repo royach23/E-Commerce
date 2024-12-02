@@ -20,7 +20,7 @@
     register: (userData: User) => Promise<void>;
     getUserTransactions: (userId: number) => Promise<Transaction[]>;
     deleteUser: (userId: number) => Promise<void>;
-    updateUser: (userId: number) => Promise<void>;
+    updateUser: (user: User) => Promise<void>;
     isAuthenticated: boolean;
   }
 
@@ -85,8 +85,9 @@
       logout();
     };
 
-    const updateUser = async (userId: number) => {
-      await UserService.updateUser(userId);
+    const updateUser = async (user: User) => {
+      const result = await UserService.updateUser(user);
+      setUser(result);
     };
 
     return (

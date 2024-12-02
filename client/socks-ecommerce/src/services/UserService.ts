@@ -16,6 +16,7 @@ export const UserService = {
         };
 
         const response = await api.post('/login', loginPayload);
+        
         return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);
@@ -26,6 +27,7 @@ export const UserService = {
     async verifyToken(): Promise<LoginResponse> {
       try {
         const response = await api.post(`${USER_URL}/verify`);
+        
         return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);
@@ -35,7 +37,6 @@ export const UserService = {
 
     async register(userData: User): Promise<LoginResponse> {
         try {
-
           const { hashedPassword } = await SecurityUtils.hashPassword(userData.password!);
           
           const userDataWithHashedPassword = {
@@ -47,6 +48,7 @@ export const UserService = {
           };
 
           const response = await api.post(USER_URL, userDataWithHashedPassword);
+          
           return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
         } catch (error) {
           console.error('Error registering user:', error);
@@ -63,9 +65,22 @@ export const UserService = {
         }
       },
 
-      async updateUser(userId: number): Promise<void> {
+      async updateUser(userData: User): Promise<User> {
         try {
-          await api.put(`${USER_URL}/${userId}`);
+          const { hashedPassword } = await SecurityUtils.hashPassword(userData.password!);
+
+          const userDataWithHashedPassword = {
+            ...userData,
+            password: hashedPassword,
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            phone_number: userData.phoneNumber,
+          };
+
+          const response = await api.put(`${USER_URL}/${userData.id}`, userDataWithHashedPassword);
+          
+          return createUserFromJson(response.data.user);
+
         } catch (error) {
           console.error('Error deleting user:', error);
           throw error;
