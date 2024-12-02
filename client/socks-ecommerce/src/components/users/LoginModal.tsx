@@ -101,7 +101,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
       sx={{
         '& .MuiDialog-paper': {
           width: '30vw',
-          height: '42vh',
+          height: '45vh',
           maxWidth: 'none',
           backgroundColor: 'background.default'
         }
