@@ -2,6 +2,8 @@ import api from '../api/api';
 import { Transaction, mapJsonToTransaction } from '../types/Transaction';
 import { CartItem } from '../types/Cart';
 
+const TRANSACTION_URL = `/transaction`;
+
 export const TransactionService = {
     async createNewTransaction(userId: number, total: number): Promise<Transaction> {
       try {
@@ -10,7 +12,7 @@ export const TransactionService = {
             total_price: total,
           };
 
-        const response = await api.post('/transaction', transactionPayload);
+        const response = await api.post(TRANSACTION_URL, transactionPayload);
         return mapJsonToTransaction(response.data);
       } catch (error) {
         console.error('Error creating transaction:', error);
@@ -26,7 +28,7 @@ export const TransactionService = {
             size: product.size
           };
   
-          const response = await api.post(`/transaction/${transactionId}/product`, payload);
+          const response = await api.post(`${TRANSACTION_URL}/${transactionId}/product`, payload);
           return mapJsonToTransaction(response.data);
         } catch (error) {
           console.error('Error creating transaction product:', error);

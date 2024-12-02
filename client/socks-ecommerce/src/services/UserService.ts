@@ -3,6 +3,8 @@ import { User, LoginCredentials, LoginResponse, createUserFromJson } from '../ty
 import SecurityUtils from '../utils/Security';
 import { mapJsonToTransactions, Transaction } from '../types/Transaction';
 
+const USER_URL = `/user`;
+
 export const UserService = {
     async login(credentials: LoginCredentials): Promise<LoginResponse> {
       try {
@@ -23,7 +25,7 @@ export const UserService = {
 
     async verifyToken(): Promise<LoginResponse> {
       try {
-        const response = await api.post('/user/verify');
+        const response = await api.post(`${USER_URL}/verify`);
         return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
       } catch (error) {
         console.error('Error logging in:', error);
@@ -44,7 +46,7 @@ export const UserService = {
             phone_number: userData.phoneNumber,
           };
 
-          const response = await api.post('/user', userDataWithHashedPassword);
+          const response = await api.post(USER_URL, userDataWithHashedPassword);
           return { access_token: response.data.access_token, user: createUserFromJson(response.data.user) };
         } catch (error) {
           console.error('Error registering user:', error);
@@ -54,7 +56,7 @@ export const UserService = {
 
       async deleteUser(userId: number): Promise<void> {
         try {
-          await api.delete(`/user/${userId}`);
+          await api.delete(`${USER_URL}/${userId}`);
         } catch (error) {
           console.error('Error deleting user:', error);
           throw error;
@@ -63,7 +65,7 @@ export const UserService = {
 
       async updateUser(userId: number): Promise<void> {
         try {
-          await api.put(`/user/${userId}`);
+          await api.put(`${USER_URL}/${userId}`);
         } catch (error) {
           console.error('Error deleting user:', error);
           throw error;
@@ -72,7 +74,7 @@ export const UserService = {
 
       async getUserTransactions(userId: number): Promise<Transaction[]> {
         try {
-          const response = await api.get(`user/${userId}/transactions`);
+          const response = await api.get(`${USER_URL}/${userId}/transactions`);
 
           return mapJsonToTransactions(response.data);;
         } catch (error) {

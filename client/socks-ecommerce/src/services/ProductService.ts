@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { Product, mapProductsJsonToProduct } from '../types/Product';
-import api, { BASE_URL } from '../api/api'
+import api from '../api/api'
 
-const Product_URL = `${BASE_URL}/product`;
+const PRODUCT_URL = `/product`;
 
 export const ProductService = {
   async getAllProducts(): Promise<Product[]> {
     try {
-      const response = await api.get(`${Product_URL}s`);
+      const response = await api.get(`${PRODUCT_URL}s`);
       return mapProductsJsonToProduct(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -17,7 +17,7 @@ export const ProductService = {
 
   async searchProducts(searchTerm: string): Promise<Product[]> {
     try {
-      const response = await api.get(`${Product_URL}/search/${searchTerm}`);
+      const response = await api.get(`${PRODUCT_URL}/search/${searchTerm}`);
       return mapProductsJsonToProduct(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
