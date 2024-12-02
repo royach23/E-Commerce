@@ -25,7 +25,7 @@ export interface User{
     first_name: string;
     last_name: string;
     address: string;
-    phone_number: string[];
+    phone_number: string;
     email: string;
   }
 
@@ -38,7 +38,7 @@ export interface User{
       firstName: jsonData.first_name,
       lastName: jsonData.last_name,
       address: jsonData.address,
-      phoneNumber: jsonData.phone_number[0] || "",
+      phoneNumber: jsonData.phone_number,
       email: jsonData.email,
     };
 

@@ -79,7 +79,7 @@ export const UserService = {
 
           const response = await api.put(`${USER_URL}/${userData.id}`, userDataWithHashedPassword);
           
-          return createUserFromJson(response.data.user);
+          return createUserFromJson(response.data);
 
         } catch (error) {
           console.error('Error deleting user:', error);

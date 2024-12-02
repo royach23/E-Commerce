@@ -5,5 +5,5 @@ class UserDetails:
         self.first_name = first_name
         self.last_name = last_name
         self.address = address
-        self.phone_number = phone_number,
+        self.phone_number = phone_number
         self.email = email
