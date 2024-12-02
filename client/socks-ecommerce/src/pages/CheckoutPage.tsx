@@ -307,15 +307,15 @@ const Checkout: React.FC = () => {
       case 1:
         return (
           <Box>
-            <Typography variant="h5" gutterBottom color='primary' fontWeight={'bold'}>
+            <Typography variant="h5" gutterBottom color='primary' fontWeight={'bold'} textAlign={'center'} mb={3}>
               Order Summary
             </Typography>
-            <Grid2 container spacing={2}>
+            <Grid2 container spacing={10} justifyContent={'center'}>
               <Grid2>
                 <Typography variant="h6" color='primary' fontWeight={'bold'}>
                   Customer Information
                 </Typography>
-                <Typography color='primary'>
+                <Typography color='primary' >
                   {user?.firstName} {user?.lastName}
                 </Typography>
                 <Typography color='primary'>

@@ -40,9 +40,33 @@ const Footer: React.FC = () => {
               Quick Links
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Link href="/" color='primary' underline="hover">Home</Link>
-              <Link href="/products" color='primary' underline="hover">Products</Link>
-              <Link href="/cart" color='primary' underline="hover">Cart</Link>
+              <Link href="/" color='primary' underline='none'
+              sx={{'&:hover': {
+                    color: 'secondary.main',
+                    boxShadow: 'none',
+                    fontWeight: 'bold'
+                  }}}
+              >
+                Home
+              </Link>
+              <Link href="/products" color='primary' underline='none'
+                sx={{'&:hover': {
+                      color: 'secondary.main',
+                      boxShadow: 'none',
+                      fontWeight: 'bold'
+                    }}}
+              >
+                Products
+              </Link>
+              <Link href="/cart" color='primary' underline='none'
+                sx={{'&:hover': {
+                      color: 'secondary.main',
+                      boxShadow: 'none',
+                      fontWeight: 'bold'
+                    }}}
+              >
+                Cart
+              </Link>
             </Box>
           </Grid2>
 
