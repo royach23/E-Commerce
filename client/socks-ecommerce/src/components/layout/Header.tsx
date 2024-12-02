@@ -22,7 +22,8 @@ import {
   Login as LoginIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountIcon,
-  ReceiptLong as OrderHistoryIcon
+  ReceiptLong as OrderHistoryIcon,
+  Person as UserDetailsIcon
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
@@ -66,6 +67,11 @@ const Header: React.FC = () => {
 
   const handleNavigateToOrderHistory = () => {
     navigate('/order-history');
+    handleMenuClose();
+  };
+
+  const handleNavigateToUserDetails = () => {
+    navigate('/user');
     handleMenuClose();
   };
 
@@ -184,6 +190,13 @@ const Header: React.FC = () => {
                 }}
                 
               >
+                <MenuItem 
+                  onClick={handleNavigateToUserDetails} 
+                  sx={{color: 'primary.main', fontSize: '1.2em'}}
+                >
+                <UserDetailsIcon sx={{ mr: 1, fontSize: '1.2em'}} />
+                  Profile
+                </MenuItem>
                 <MenuItem onClick={handleNavigateToOrderHistory} sx={{color: 'primary.main', fontSize: '1.2em'}}>
                   <OrderHistoryIcon sx={{ mr: 1, fontSize: '1.2em'}} />
                   Order History

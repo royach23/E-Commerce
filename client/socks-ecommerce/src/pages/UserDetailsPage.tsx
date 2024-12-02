@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { useUser } from '../contexts/UserContext';
 import { User } from '../types/User';
+import { useNavigate } from 'react-router-dom';
 
 const UserDetailsPage: React.FC = () => {
   const { user, updateUser, deleteUser } = useUser();
@@ -27,9 +28,15 @@ const UserDetailsPage: React.FC = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const navigate = useNavigate();
 
   if (!user) {
-    return <Typography>Please log in to view your details</Typography>;
+    return <Typography
+        variant="h5" 
+        align="center"
+        sx={{ mt: 4 }}
+        color='primary'>Please log in to view your details
+      </Typography>;
   }
 
   const validateField = (name: string, value: string | number) => {
@@ -47,7 +54,7 @@ const UserDetailsPage: React.FC = () => {
       case 'firstName':
       case 'lastName':
         if (!value) return `${name === 'firstName' ? 'First' : 'Last'} name is required`;
-        if (value.length < 2) return `${name === 'firstName' ? 'First' : 'Last'} name must be at least 2 characters long`;
+        if (value.length < 2) return `${name === 'firstName' ? 'First' : 'Last'} name is too short`;
         if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
         return '';
 
@@ -141,6 +148,7 @@ const UserDetailsPage: React.FC = () => {
       setSnackbarMessage('Account deleted successfully');
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
+      navigate(`/`)
     } catch (error) {
       console.error('Error deleting user', error);
       setSnackbarMessage('Failed to delete account');
@@ -303,10 +311,15 @@ const UserDetailsPage: React.FC = () => {
       <Dialog
         open={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
+        sx={{
+          '& .MuiDialog-paper': {
+            backgroundColor: 'background.default'
+          }
+        }}
       >
-        <DialogTitle>Delete Account</DialogTitle>
+        <DialogTitle fontSize={24} color='primary'>Delete Account</DialogTitle>
         <DialogContent>
-          <Typography>
+          <Typography color='primary'>
             Are you sure you want to delete your account? 
             This action cannot be undone.
           </Typography>
