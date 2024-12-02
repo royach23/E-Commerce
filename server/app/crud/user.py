@@ -75,14 +75,18 @@ async def update(user_id: int, user: Users, authorized_user, db):
     result = updated_user.first()
     if result == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'user with such id: {user_id} does not exist')
-    if updated_user.username != authorized_user['sub']:
+    if result.username != authorized_user['sub']:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"unauthorized action")
     else:
         new_user_details = User(**user.model_dump())
-        new_user_details.password = security.hash_password(new_user_details.password)
+        if new_user_details.password == 'none':
+            new_user_details.password = security.hash_password(new_user_details.password)
+        else:
+            new_user_details.password = result.password
+        
         new_user_details.user_id = user_id
-        new_user_details.username = updated_user.username
-        updated_user.update(new_user_details.dict(), synchronize_session=False)
+        new_user_details.username = result.username
+        updated_user.update({key: value for key, value in new_user_details.__dict__.items() if not key.startswith('_')}, synchronize_session=False)
         db.commit()
                
     return updated_user.first()

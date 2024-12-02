@@ -71,7 +71,7 @@ export const UserService = {
 
           const userDataWithHashedPassword = {
             ...userData,
-            password: hashedPassword,
+            password: userData.password ? hashedPassword : 'none',
             first_name: userData.firstName,
             last_name: userData.lastName,
             phone_number: userData.phoneNumber,
