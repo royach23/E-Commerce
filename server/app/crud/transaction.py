@@ -3,6 +3,8 @@ from ..models.transaction import Transaction
 from ..models.transactionProduct import TransactionProduct
 from fastapi import HTTPException, status, Response
 from sqlalchemy.orm import joinedload
+from datetime import datetime
+import pytz
 
 async def getTransaction(transaction_id: int, db):
     transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).options(joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product))
@@ -19,6 +21,7 @@ async def getUserTransactions(user_id: int, db):
 
 async def createTransaction(transaction, db):
     new_transaction = Transaction(**transaction.dict(), order_status= OrderStatus.PENDING.value)
+    new_transaction.purchase_time = datetime.now(pytz.timezone('Israel')).isoformat()
     db.add(new_transaction)
     db.commit()
     db.refresh(new_transaction)
