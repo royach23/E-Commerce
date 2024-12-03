@@ -26,10 +26,11 @@ Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-q
 
 ### Prerequisites
 - pyhon 3.8+
+- pip
 - Node.js (v16+ recommended)
 - npm
 - postgresSQL
-- pip
+- redis
 
 ### Setup Steps
 
@@ -49,17 +50,41 @@ Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-q
    cd server
    pip install -r requirements.txt
    ```
+3. Set up a posdtres database
+- Open your PostgreSQL command-line tool or GUI (e.g., pgAdmin).
+- Create a new database by running the following command:
+   ```
+   CREATE DATABASE sock_haven_db;
+   ```
+- Create a user and set a password:
+   ```
+   CREATE USER sock_haven_user WITH PASSWORD 'your_password';
+   ```
+- Grant privileges to the user on the new database:
+   ```
+   GRANT ALL PRIVILEGES ON DATABASE sock_haven_db TO sock_haven_user;
+   ```
 
-3. Set up environment variables
+4. Set up Redis
+   ```bash
+   redis-server
+   ```
+   Test Redis Installation (optional): Open a new terminal and run:
+   ```bash
+   redis-cli ping
+   ```
+   You should see PONG as a response.
+
+5. Set up environment variables
    Create a `.env` file in the root directory with:
    ```
-   SQLALCHEMY_DATABASE_URL=your_postgresSQL_connection_string
+   SQLALCHEMY_DATABASE_URL=postgresql://sock_haven_user:your_password@localhost/sock_haven_db
    SECRET_KEY=your_jwt_secret
    ALGORITHM=your_hashing_algorithm
    ACCESS_TOKEN_EXPIRE_MINUTES=expiration_time_for_the_access_token
    ```
 
-4. Run the development server
+6. Run the development server
    ```bash
    - client:
    cd client
