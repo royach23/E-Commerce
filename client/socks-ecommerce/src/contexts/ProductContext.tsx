@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { Product } from '../types/Product';
 import { ProductService } from '../services/ProductService';
+import { useLocation } from 'react-router-dom';
 
 interface ProductContextType {
   products: Product[];
@@ -16,6 +17,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -48,6 +50,12 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      fetchProducts();
+    }
+  }, [location.pathname]);
 
   return (
     <ProductContext.Provider value={{ 

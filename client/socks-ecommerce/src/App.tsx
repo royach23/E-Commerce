@@ -11,15 +11,15 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <CartProvider>
+      <Router>
         <ProductProvider>
           <UserProvider>
-            <Router>
+            <CartProvider>
               <Layout />
-            </Router>
+            </CartProvider>
           </UserProvider>
         </ProductProvider>
-      </CartProvider>
+      </Router>
     </ThemeProvider>
   );
 };
