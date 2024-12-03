@@ -94,9 +94,18 @@ const ProductDetail: React.FC = () => {
                 value={size}
                 onChange={handleSizeChange}
                 label="Size"
+                inputProps={{
+                  MenuProps: {
+                      MenuListProps: {
+                          sx: {
+                              backgroundColor: 'primary.light'
+                          }
+                      }
+                  }
+              }}
               >
                 {product.sizes?.map((s) => (
-                  <MenuItem key={s} value={s}>
+                  <MenuItem key={s} value={s} sx={{color: 'primary.main'}}>
                     {s}
                   </MenuItem>
                 )) || [
@@ -111,9 +120,18 @@ const ProductDetail: React.FC = () => {
                 value={quantity.toString()}
                 onChange={handleQuantityChange}
                 label="Quantity"
+                inputProps={{
+                  MenuProps: {
+                      MenuListProps: {
+                          sx: {
+                              backgroundColor: 'primary.light'
+                          }
+                      }
+                  }
+              }}
               >
                 {[1, 2, 3, 4, 5].map((q) => (
-                  <MenuItem key={q} value={q}>
+                  <MenuItem key={q} value={q}  sx={{color: 'primary.main'}}>
                     {q}
                   </MenuItem>
                 ))}

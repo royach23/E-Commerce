@@ -80,9 +80,9 @@ async def update(user_id: int, user: Users, authorized_user, db):
     else:
         new_user_details = User(**user.model_dump())
         if new_user_details.password == 'none':
-            new_user_details.password = security.hash_password(new_user_details.password)
-        else:
             new_user_details.password = result.password
+        else:
+            new_user_details.password = security.hash_password(new_user_details.password)
         
         new_user_details.user_id = user_id
         new_user_details.username = result.username
