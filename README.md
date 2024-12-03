@@ -2,15 +2,15 @@
 
 ## Table of Contents
 
-- [Project Overview](#Project-Overview)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation) 1 
+- [Project Overview](#-project-overview)
+- [Features](#-features)
+- [Technologies Used](#-technologies-used)
+- [Installation](#%EF%B8%8F-installation) 
 - [Prerequisites](#prerequisites)
 - [Setup Steps](#setup-steps)
 - [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Contact](#contact)
+- [Project Structure](#-project-structure)
+- [Contact](#-contact)
 - [Project Maintainer](#project-maintainer)
 
 ## 📦 Project Overview
@@ -108,7 +108,7 @@ Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-q
    uvicorn app.main:app --reload
    ```
 
-## API documentaiotion
+## API documentation
 API documentation is available at 'http://127.0.0.1:8000/docs' or 'http://127.0.0.1:8000/redoc' when the server is running
 
 ## 📊 Project Structure
@@ -232,7 +232,7 @@ E-Commerce/
 **Project Maintainer**: Your Name
 - Email: roy.achituv@gmail.com
 - Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
-
+- Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
 ---
 
 **Happy Sock Shopping! 🧦✨**
