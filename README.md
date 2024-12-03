@@ -1,5 +1,18 @@
 # Sock Haven
 
+## Table of Contents
+
+- [Project Overview](#Project-Overview)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation) 1 
+- [Prerequisites](#prerequisites)
+- [Setup Steps](#setup-steps)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Contact](#contact)
+- [Project Maintainer](#project-maintainer)
+
 ## 📦 Project Overview
 
 Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-quality, stylish socks to customers worldwide. Our website offers a diverse range of sock styles, from athletic and casual to luxury and novelty designs.
@@ -92,7 +105,11 @@ Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-q
 
    - server:
    cd server
-   uvicorn app.main:app --reload   ```
+   uvicorn app.main:app --reload
+   ```
+
+## API documentaiotion
+API documentation is available at 'http://127.0.0.1:8000/docs' or 'http://127.0.0.1:8000/redoc' when the server is running
 
 ## 📊 Project Structure
 
