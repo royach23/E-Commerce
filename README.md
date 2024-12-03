@@ -231,7 +231,6 @@ E-Commerce/
 **Project Maintainer**: Roy Achituv
 - Email: roy.achituv@gmail.com
 - Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
-- Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
 ---
 
 **Happy Sock Shopping! 🧦✨**
