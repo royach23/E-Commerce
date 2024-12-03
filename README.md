@@ -11,7 +11,6 @@
 - [API Documentation](#api-documentation)
 - [Project Structure](#-project-structure)
 - [Contact](#-contact)
-- [Project Maintainer](#project-maintainer)
 
 ## 📦 Project Overview
 
@@ -229,7 +228,7 @@ E-Commerce/
 
 ## 📞 Contact
 
-**Project Maintainer**: Your Name
+**Project Maintainer**: Roy Achituv
 - Email: roy.achituv@gmail.com
 - Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
 - Project Link: [https://github.com/yourusername/sockstop](https://github.com/royach23/E-Commerce)
