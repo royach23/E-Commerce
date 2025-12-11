@@ -3,7 +3,7 @@ version: '3s'
 services:
   app:
     build:
-      context: ./client/socks-ecommerce/
+      context: ./client/
       dockerfile: ./Dockerfile
     restart: always
     ports:
