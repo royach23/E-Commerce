@@ -78,14 +78,13 @@ Sock Haven is a comprehensive e-commerce platform dedicated to delivering high-q
    ```
 
 4. Set up Redis
-   ```bash
-   redis-server
-   ```
-   Test Redis Installation (optional): Open a new terminal and run:
-   ```bash
-   redis-cli ping
-   ```
-   You should see PONG as a response.
+   - **Windows (WSL)**: `sudo apt install redis-server` then `sudo service redis-server start`
+   - **Docker**: `docker run -p 6379:6379 -d redis`
+   - **Command**:
+     ```bash
+     redis-server
+     ```
+   Test Redis Installation: Open a new terminal and run `redis-cli ping`. You should see `PONG`.
 
 5. Set up environment variables
    Create a `.env` file in the root directory with:
