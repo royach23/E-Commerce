@@ -1,13 +1,17 @@
-FROM python:3.12.8-alpine
+FROM node:20-alpine
+
+RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY package.json pnpm-lock.yaml* ./
 
-RUN pip install -r requirements.txt
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 COPY . .
 
+RUN pnpm run build
+
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["pnpm", "run", "start:prod"]
