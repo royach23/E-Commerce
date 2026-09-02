@@ -23,7 +23,6 @@ const UserDetailsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [updatedUser, setUpdatedUser] = useState<Partial<User>>({});
-  const [newPassword, setNewPassword] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -31,52 +30,40 @@ const UserDetailsPage: React.FC = () => {
   const navigate = useNavigate();
 
   if (!user) {
-    return <Typography
+    return (
+      <Typography
         variant="h5" 
         align="center"
         sx={{ mt: 4 }}
-        color='primary'>Please log in to view your details
-      </Typography>;
+        color='primary'
+      >
+        Please log in to view your details
+      </Typography>
+    );
   }
 
   const validateField = (name: string, value: string | number) => {
     if (typeof value === 'number') {
-        return value.toString();
-      }
+      return value.toString();
+    }
     
     switch (name) {
-      case 'email':
-        { if (!value) return 'Email is required';
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) return 'Please enter a valid email address';
-            return ''; }
-
-      case 'firstName':
-      case 'lastName':
-        if (!value) return `${name === 'firstName' ? 'First' : 'Last'} name is required`;
-        if (value.length < 2) return `${name === 'firstName' ? 'First' : 'Last'} name is too short`;
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
-        return '';
-
-      case 'phoneNumber':
-        { if (!value) return 'Phone number is required';
-        const phoneRegex = /^\+?[\d\s()-]{10,15}$/;
-        if (!phoneRegex.test(value)) return 'Please enter a valid phone number';
-        return ''; }
-
-      case 'address':
-        if (!value) return 'Address is required';
-        if (value.trim().length < 5) return 'Please provide a valid address';
-        return '';
-
-      case 'password':
-        if (value) {
-          if (value.length >= 1 && value.length < 8) return 'Password must be at least 8 characters long';
-          if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])/.test(value)) 
-            return 'Password must include uppercase, lowercase, number, and special character';
+      case 'email': {
+        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim())) {
+          return 'Please enter a valid email address';
         }
         return '';
-
+      }
+      case 'phoneNumber': {
+        if (value && !/^[\d\s()+-]{7,25}$/.test(String(value).trim())) {
+          return 'Please enter a valid phone number';
+        }
+        return '';
+      }
+      // Relaxed validation for first name, last name, and address
+      case 'firstName':
+      case 'lastName':
+      case 'address':
       default:
         return '';
     }
@@ -89,28 +76,22 @@ const UserDetailsPage: React.FC = () => {
       [name]: value
     }));
 
-    const fieldError = validateField(name, value);
+    const error = validateField(name, value);
     setErrors(prev => ({
       ...prev,
-      [name]: fieldError
+      [name]: error
     }));
   };
 
   const validateForm = () => {
     const formErrors: { [key: string]: string } = {};
-    
-    const fieldsToValidate = ['firstName', 'lastName', 'email', 'phoneNumber', 'address'];
+    const fieldsToValidate = ['email', 'phoneNumber'];
     
     fieldsToValidate.forEach(field => {
-      const value = updatedUser[field as keyof User] || user?.[field as keyof User] || '';
+      const value = updatedUser[field as keyof User] ?? user?.[field as keyof User] ?? '';
       const error = validateField(field, value);
       if (error) formErrors[field] = error;
     });
-
-    if (newPassword) {
-      const passwordError = validateField('password', newPassword);
-      if (passwordError) formErrors['password'] = passwordError;
-    }
 
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
@@ -122,12 +103,10 @@ const UserDetailsPage: React.FC = () => {
         const userToUpdate: User = {
           ...user,
           ...updatedUser,
-          ...(newPassword ? { password: newPassword } : {})
         };
 
         await updateUser(userToUpdate);
         setIsEditing(false);
-        setNewPassword('');
         setSnackbarMessage('User details updated successfully');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
@@ -148,7 +127,7 @@ const UserDetailsPage: React.FC = () => {
       setSnackbarMessage('Account deleted successfully');
       setSnackbarSeverity('success');
       setOpenSnackbar(true);
-      navigate(`/`)
+      navigate(`/`);
     } catch (error) {
       console.error('Error deleting user', error);
       setSnackbarMessage('Failed to delete account');
@@ -169,33 +148,46 @@ const UserDetailsPage: React.FC = () => {
           {!isEditing ? (
             <>
               <Typography variant="h3" gutterBottom color='primary' textAlign={'center'}>
-                Hello {user.firstName}!
+                Hello {user.firstName || user.username || 'User'}!
               </Typography>
               <Grid2 container spacing={2} display={'flex'} flexDirection={'column'}>
+                <Grid2>
+                  <Typography fontSize={22} color='primary'><strong>User ID:</strong> {user.id}</Typography>
+                </Grid2>
                 <Grid2>
                   <Typography fontSize={22} color='primary'><strong>Username:</strong> {user.username}</Typography>
                 </Grid2>
                 <Grid2>
-                  <Typography fontSize={22} color='primary'><strong>First Name:</strong> {user.firstName}</Typography>
+                  <Typography fontSize={22} color='primary'><strong>First Name:</strong> {user.firstName || <em>Not set</em>}</Typography>
                 </Grid2>
                 <Grid2>
-                  <Typography fontSize={22} color='primary'><strong>Last Name:</strong> {user.lastName}</Typography>
-                </Grid2>
-                <Grid2 >
-                  <Typography fontSize={22} color='primary'><strong>Email:</strong> {user.email}</Typography>
+                  <Typography fontSize={22} color='primary'><strong>Last Name:</strong> {user.lastName || <em>Not set</em>}</Typography>
                 </Grid2>
                 <Grid2>
-                  <Typography fontSize={22} color='primary'><strong>Phone Number:</strong> {user.phoneNumber}</Typography>
+                  <Typography fontSize={22} color='primary'><strong>Email:</strong> {user.email || <em>Not set</em>}</Typography>
                 </Grid2>
                 <Grid2>
-                  <Typography fontSize={22} color='primary'><strong>Address:</strong> {user.address}</Typography>
+                  <Typography fontSize={22} color='primary'><strong>Phone Number:</strong> {user.phoneNumber || <em>Not set</em>}</Typography>
+                </Grid2>
+                <Grid2>
+                  <Typography fontSize={22} color='primary'><strong>Address:</strong> {user.address || <em>Not set</em>}</Typography>
                 </Grid2>
               </Grid2>
-              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
                 <Button 
                   variant="contained" 
                   color="primary" 
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setUpdatedUser({
+                      firstName: user.firstName || '',
+                      lastName: user.lastName || '',
+                      email: user.email || '',
+                      phoneNumber: user.phoneNumber || '',
+                      address: user.address || '',
+                    });
+                    setErrors({});
+                    setIsEditing(true);
+                  }}
                 >
                   Edit Details
                 </Button>
@@ -210,15 +202,15 @@ const UserDetailsPage: React.FC = () => {
             </>
           ) : (
             <>
-            <Typography variant="h3" gutterBottom color='primary' textAlign={'center'}>
+              <Typography variant="h3" gutterBottom color='primary' textAlign={'center'}>
                 Edit Your Info
-            </Typography>
+              </Typography>
               <Grid2 container spacing={2} display={'flex'} flexDirection={'column'}>
                 <Grid2 container spacing={'6%'}>
                   <TextField
                     label="First Name"
                     name="firstName"
-                    defaultValue={user.firstName}
+                    value={updatedUser.firstName ?? user.firstName ?? ''}
                     onChange={handleInputChange}
                     sx={{width: '47%'}}
                     error={!!errors.firstName}
@@ -227,7 +219,7 @@ const UserDetailsPage: React.FC = () => {
                   <TextField
                     label="Last Name"
                     name="lastName"
-                    defaultValue={user.lastName}
+                    value={updatedUser.lastName ?? user.lastName ?? ''}
                     onChange={handleInputChange}
                     sx={{width: '47%'}}
                     error={!!errors.lastName}
@@ -239,7 +231,7 @@ const UserDetailsPage: React.FC = () => {
                     fullWidth
                     label="Email"
                     name="email"
-                    defaultValue={user.email}
+                    value={updatedUser.email ?? user.email ?? ''}
                     onChange={handleInputChange}
                     error={!!errors.email}
                     helperText={errors.email}
@@ -250,7 +242,7 @@ const UserDetailsPage: React.FC = () => {
                     fullWidth
                     label="Phone Number"
                     name="phoneNumber"
-                    defaultValue={user.phoneNumber}
+                    value={updatedUser.phoneNumber ?? user.phoneNumber ?? ''}
                     onChange={handleInputChange}
                     error={!!errors.phoneNumber}
                     helperText={errors.phoneNumber}
@@ -261,33 +253,13 @@ const UserDetailsPage: React.FC = () => {
                     fullWidth
                     label="Address"
                     name="address"
-                    defaultValue={user.address}
+                    value={updatedUser.address ?? user.address ?? ''}
                     onChange={handleInputChange}
                     error={!!errors.address}
                     helperText={errors.address}
                   />
                 </Grid2>
-                <Grid2>
-                  <TextField
-                    fullWidth
-                    label="New Password"
-                    type="password"
-                    name="password"
-                    value={newPassword}
-                    onChange={(e) => {
-                      setNewPassword(e.target.value);
-                      const passwordError = validateField('password', e.target.value);
-                      setErrors(prev => ({
-                        ...prev,
-                        password: passwordError
-                      }));
-                    }}
-                    placeholder="Leave blank if no change"
-                    error={!!errors.password}
-                    helperText={errors.password}
-                  />
-                </Grid2>
-                <Grid2 sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Grid2 sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                   <Button 
                     variant="contained" 
                     color="primary" 

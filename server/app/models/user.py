@@ -1,16 +1,16 @@
-from sqlalchemy import String, Integer, Column
+from sqlalchemy import String, Column
 from app.utils.database import Base
 from sqlalchemy.orm import relationship
 
-class User (Base):
+class User(Base):
     __tablename__ = 'users'
-    user_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    username = Column (String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    first_name = Column (String, nullable=False)
-    last_name = Column(String, nullable=False)
-    address = Column (String, nullable=False)
-    phone_number = Column(String, nullable=False, unique=True)
+    user_id = Column(String, primary_key=True, nullable=False)
+    username = Column(String, nullable=True)
+    first_name = Column(String, nullable=True)
+    last_name = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    phone_number = Column(String, nullable=True)
     email = Column(String, nullable=False, unique=True)
     transactions = relationship("Transaction", backref="users")
+
     

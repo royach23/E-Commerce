@@ -1,5 +1,3 @@
-version: '3s'
-
 services:
   app:
     build:

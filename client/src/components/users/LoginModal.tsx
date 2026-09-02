@@ -1,97 +1,32 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Dialog, 
   DialogTitle, 
   DialogContent, 
-  TextField, 
   Button, 
-  DialogActions 
+  DialogActions,
+  Typography,
+  Box
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { LoginCredentials } from '../../types/User';
 import { useUser } from '../../contexts/UserContext';
+import { Login as LoginIcon, PersonAdd as RegisterIcon } from '@mui/icons-material';
 
 interface LoginModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-type LoginErrors = Partial<Record<keyof LoginCredentials, string>> & {
-  submit?: string
-};
-
 const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
-  const [credentials, setCredentials] = useState<LoginCredentials>({
-    username: '',
-    password: ''
-  });
-  const [errors, setErrors] = useState<LoginErrors>({});
-  const navigate = useNavigate();
-  const { login } = useUser();
-
-  const validateField = (name: keyof LoginCredentials, value: string) => {
-    switch (name) {
-      case 'username':
-        if (!value) return 'Username is required';
-        if (value.length < 3) return 'Username must be at least 3 characters long';
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Username can only contain letters, numbers, and underscores';
-        return '';
-
-      case 'password':
-        if (!value) return 'Password is required';
-        if (value.length < 8) return 'Password must be at least 8 characters long';
-        return '';
-
-      default:
-        return '';
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setCredentials(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    const fieldError = validateField(name as keyof LoginCredentials, value);
-    setErrors(prev => ({
-      ...prev,
-      [name]: fieldError
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors: LoginErrors = {};
-    
-    (Object.keys(credentials) as Array<keyof LoginCredentials>).forEach(key => {
-      const error = validateField(key, credentials[key]);
-      if (error) newErrors[key] = error;
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const { login, register } = useUser();
 
   const handleLogin = async () => {
-    if (validateForm()) {
-      try {
-        await login(credentials);
-        onClose();
-        navigate('/');
-      } catch (err) {
-        setErrors(prev => ({
-          ...prev,
-          submit: 'Invalid credentials. Please try again.'
-        }));
-        console.error(err);
-      }
-    }
+    onClose();
+    await login();
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     onClose();
-    navigate('/register');
+    await register();
   };
 
   return (
@@ -100,52 +35,49 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, onClose }) => {
       onClose={onClose}       
       sx={{
         '& .MuiDialog-paper': {
-          width: '30vw',
-          height: '40vh',
-          maxWidth: 'none',
-          backgroundColor: 'background.default'
+          width: '35vw',
+          maxWidth: '500px',
+          padding: 3,
+          backgroundColor: 'background.default',
+          borderRadius: 2
         }
       }}
     >
-      <DialogTitle fontSize={40} color='primary'>Sign In</DialogTitle>
-      <DialogContent sx={{pb: '0'}}>
-        <TextField
-          autoFocus
-          margin="dense"
-          label="Username"
-          name="username"
-          type="username"
-          color='primary'
-          fullWidth
-          value={credentials.username}
-          onChange={handleChange}
-          error={!!errors.username}
-          helperText={errors.username}
-          sx={{height: '5em'}}
-        />
-        <TextField
-          margin="dense"
-          label="Password"
-          name="password"
-          type="password"
-          fullWidth
-          value={credentials.password}
-          onChange={handleChange}
-          error={!!errors.password}
-          helperText={errors.password}
-          sx={{height: '5em'}}
-        />
-        {errors.submit && <p style={{ color: 'red' }}>{errors.submit}</p>}
+      <DialogTitle fontSize={32} color='primary' textAlign='center' fontWeight='bold'>
+        Welcome to Sock Haven
+      </DialogTitle>
+      <DialogContent sx={{ textAlign: 'center', py: 2 }}>
+        <Typography variant="body1" color="text.secondary" mb={3}>
+          Sign in or create an account using secure authentication with Auth0.
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Button 
+            onClick={handleLogin} 
+            variant="contained" 
+            color="primary" 
+            size='large'
+            startIcon={<LoginIcon />}
+            fullWidth
+            sx={{ py: 1.5, fontSize: '1.1rem' }}
+          >
+            Log In with Auth0
+          </Button>
+          <Button 
+            onClick={handleRegister} 
+            variant="outlined" 
+            color="primary" 
+            size='large'
+            startIcon={<RegisterIcon />}
+            fullWidth
+            sx={{ py: 1.5, fontSize: '1.1rem' }}
+          >
+            Create New Account
+          </Button>
+        </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleRegister} color="primary" size='large'>
-          Register
-        </Button>
-        <Button onClick={onClose} color="primary" size='large'>
+      <DialogActions sx={{ justifyContent: 'center', mt: 1 }}>
+        <Button onClick={onClose} color="inherit">
           Cancel
-        </Button>
-        <Button onClick={handleLogin} color="primary" size='large'>
-          Sign In
         </Button>
       </DialogActions>
     </Dialog>

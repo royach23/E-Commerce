@@ -5,10 +5,10 @@ import { CartItem } from '../types/Cart';
 const TRANSACTION_URL = `/transaction`;
 
 export const TransactionService = {
-    async createNewTransaction(userId: number, total: number): Promise<Transaction> {
+    async createNewTransaction(userId: string | number, total: number): Promise<Transaction> {
       try {
         const transactionPayload = {
-            user_id: userId,
+            user_id: String(userId),
             total_price: total,
           };
 
