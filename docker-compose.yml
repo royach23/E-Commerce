@@ -44,5 +44,15 @@ services:
     ports:
       - "6379:6379"
 
+  pgweb:
+    image: sosedoff/pgweb
+    restart: always
+    ports:
+      - "127.0.0.1:8081:8081"
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/ecommerce?sslmode=disable
+    depends_on:
+      - db
+
 volumes:
       postgres_data: 
