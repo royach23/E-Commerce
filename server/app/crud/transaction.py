@@ -29,17 +29,16 @@ async def getUserTransactions(user_id: str, db):
     return transaction.all()
 
 async def createTransaction(transaction, db):
-    # Ensure user has complete contact and shipping details before placing an order
     user = db.query(User).filter(User.user_id == transaction.user_id).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {transaction.user_id} does not exist"
         )
-    if not (user.first_name and user.last_name and user.phone_number and user.address):
+    if not ((user.first_name or user.username) and user.phone_number and user.address):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incomplete user profile. Please provide first name, last name, phone number, and address before placing an order."
+            detail="Incomplete user profile. Please provide your name, phone number, and address before placing an order."
         )
 
     new_transaction = Transaction(**transaction.dict(), order_status=OrderStatus.PENDING.value)

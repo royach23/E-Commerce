@@ -210,17 +210,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const adminStatus = checkAdminRole(null, auth0User as any, claims as any);
           // Fallback baseline user from Auth0 profile so UI continues to function
           if (isMounted && auth0User.sub) {
-            lastSyncedSubRef.current = auth0User.sub;
-            setUser({
+            setUser((prev) => ({
               id: auth0User.sub,
-              username: auth0User.nickname || auth0User.name || '',
-              firstName: auth0User.given_name || '',
-              lastName: auth0User.family_name || '',
-              email: auth0User.email || '',
-              address: '',
-              phoneNumber: '',
+              username: auth0User.nickname || auth0User.name || prev?.username || '',
+              firstName: auth0User.given_name || prev?.firstName || '',
+              lastName: auth0User.family_name || prev?.lastName || '',
+              email: auth0User.email || prev?.email || '',
+              address: prev?.address || '',
+              phoneNumber: prev?.phoneNumber || '',
               isAdmin: adminStatus,
-            });
+            }));
             setIsAuthenticated(true);
             setIsAdmin(adminStatus);
           }

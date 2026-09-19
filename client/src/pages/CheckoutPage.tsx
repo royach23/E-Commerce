@@ -46,8 +46,7 @@ const Checkout: React.FC = () => {
   const navigate = useNavigate();
 
   const isProfileComplete = Boolean(
-    user?.firstName?.trim() &&
-    user?.lastName?.trim() &&
+    (user?.firstName?.trim() || user?.username?.trim()) &&
     user?.phoneNumber?.trim() &&
     user?.address?.trim()
   );
