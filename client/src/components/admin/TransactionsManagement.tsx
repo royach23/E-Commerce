@@ -51,7 +51,8 @@ export const TransactionsManagement: React.FC<TransactionsManagementProps> = ({
       const matchesStatus = statusFilter === 'ALL' || t.orderStatus.toUpperCase() === statusFilter.toUpperCase();
       const matchesSearch =
         String(t.transactionId).includes(orderSearch) ||
-        (t.userId && t.userId.toLowerCase().includes(orderSearch.toLowerCase()));
+        (t.userId && t.userId.toLowerCase().includes(orderSearch.toLowerCase())) ||
+        (t.address && t.address.toLowerCase().includes(orderSearch.toLowerCase()));
       return matchesStatus && matchesSearch;
     });
   }, [transactions, statusFilter, orderSearch]);
@@ -148,7 +149,7 @@ export const TransactionsManagement: React.FC<TransactionsManagementProps> = ({
         <TextField
           size="small"
           label="Search Orders"
-          placeholder="Search by Order # or Customer ID..."
+          placeholder="Search by Order #, Customer, or Address..."
           value={orderSearch}
           onChange={(e) => setOrderSearch(e.target.value)}
           sx={{ minWidth: 260, flexGrow: 1 }}

@@ -17,7 +17,8 @@ import {
 } from '@mui/material';
 import {
   KeyboardArrowDown as ExpandMoreIcon,
-  KeyboardArrowUp as ExpandLessIcon
+  KeyboardArrowUp as ExpandLessIcon,
+  LocalShipping as ShippingIcon
 } from '@mui/icons-material';
 import { Transaction } from '../../types/Transaction';
 
@@ -112,9 +113,22 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({
 
       {/* Expanded items */}
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 2, p: 2, bgcolor: '#fafafa', borderRadius: 2, border: '1px solid #eee' }}>
+              {/* Order Delivery & Customer Info */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2, p: 1.5, bgcolor: '#ffffff', borderRadius: 1.5, border: '1px solid #e0e0e0', flexWrap: 'wrap' }}>
+                <ShippingIcon sx={{ color: 'primary.main', fontSize: 24 }} />
+                <Box>
+                  <Typography variant="caption" sx={{ fontWeight: 'bold', color: 'text.secondary', textTransform: 'uppercase', display: 'block' }}>
+                    Delivery / Shipping Address
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                    {tx.address || 'No address recorded'}
+                  </Typography>
+                </Box>
+              </Box>
+
               <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1.5, color: 'primary.main' }}>
                 Order Items Breakdown:
               </Typography>

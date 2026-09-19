@@ -5,12 +5,15 @@ import { CartItem } from '../types/Cart';
 const TRANSACTION_URL = `/transaction`;
 
 export const TransactionService = {
-    async createNewTransaction(userId: string | number, total: number): Promise<Transaction> {
+    async createNewTransaction(userId: string | number, total: number, address?: string): Promise<Transaction> {
       try {
-        const transactionPayload = {
+        const transactionPayload: { user_id: string; total_price: number; address?: string } = {
             user_id: String(userId),
             total_price: total,
-          };
+        };
+        if (address) {
+            transactionPayload.address = address;
+        }
 
         const response = await api.post(TRANSACTION_URL, transactionPayload);
         return mapJsonToTransaction(response.data);

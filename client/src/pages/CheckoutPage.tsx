@@ -157,7 +157,7 @@ const Checkout: React.FC = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       try {
-        const transaction = await createTransaction();
+        const transaction = await createTransaction(user?.address);
         
         if (transaction) {
           navigate('/order-completion', {
@@ -165,6 +165,7 @@ const Checkout: React.FC = () => {
               orderDetails: {
                 orderId: transaction.transactionId,
                 total: transaction.cart?.total,
+                address: transaction.address || user?.address,
                 estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
               }
             }

@@ -23,7 +23,7 @@ async def getTransaction(transaction_id: int, db):
 async def getUserTransactions(user_id: str, db):
     transaction = db.query(Transaction).filter(Transaction.user_id == user_id).options(
         joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product)
-    )
+    ).order_by(Transaction.purchase_time.desc())
     if not transaction:
         return []
     return transaction.all()
@@ -35,13 +35,17 @@ async def createTransaction(transaction, db):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"User with id {transaction.user_id} does not exist"
         )
-    if not ((user.first_name or user.username) and user.phone_number and user.address):
+    shipping_address = getattr(transaction, 'address', None) or user.address
+    if not ((user.first_name or user.username) and user.phone_number and shipping_address):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incomplete user profile. Please provide your name, phone number, and address before placing an order."
         )
 
-    new_transaction = Transaction(**transaction.dict(), order_status=OrderStatus.PENDING.value)
+    tx_data = transaction.dict() if hasattr(transaction, 'dict') else dict(transaction)
+    tx_data['address'] = shipping_address
+
+    new_transaction = Transaction(**tx_data, order_status=OrderStatus.PENDING.value)
     new_transaction.purchase_time = datetime.now(pytz.timezone('Israel')).isoformat()
     db.add(new_transaction)
     db.commit()

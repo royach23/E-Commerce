@@ -7,6 +7,7 @@ export interface Transaction {
   orderStatus: string;
   userId: string;
   transactionId: number;
+  address?: string;
 }
 
 interface JsonResponse {
@@ -15,6 +16,7 @@ interface JsonResponse {
   purchase_time: string;
   total_price: number;
   order_status: string;
+  address?: string;
   transaction_products: JsonTransactionProduct[];
 }
 
@@ -36,6 +38,8 @@ export const mapJsonToTransaction = (jsonResponse: JsonResponse): Transaction =>
     purchaseTime: jsonResponse.purchase_time,
     orderStatus: jsonResponse.order_status,
     transactionId: jsonResponse.transaction_id,
+    address: jsonResponse.address,
+
     cart: {
       total: jsonResponse.total_price,
       items: jsonResponse.transaction_products?.map((productEntry) => ({
