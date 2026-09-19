@@ -88,10 +88,12 @@ const UserDetailsPage: React.FC = () => {
     const fieldsToValidate = ['email', 'phoneNumber'];
     
     fieldsToValidate.forEach(field => {
-      const value = updatedUser[field as keyof User] ?? user?.[field as keyof User] ?? '';
+      const rawValue = updatedUser[field as keyof User] ?? user?.[field as keyof User] ?? '';
+      const value = typeof rawValue === 'string' ? rawValue : String(rawValue);
       const error = validateField(field, value);
       if (error) formErrors[field] = error;
     });
+
 
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;

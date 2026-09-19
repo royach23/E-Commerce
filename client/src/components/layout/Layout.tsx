@@ -10,7 +10,8 @@ import {
 } from '@mui/material';
 import Header from './Header'; 
 import Footer from './Footer'; 
-import { Home, Products, ProductDetail, Cart, Checkout, Register, OrderCompletion, OrderHistory, UserDetails } from '../../pages';
+import { Home, Products, ProductDetail, Cart, Checkout, Register, OrderCompletion, OrderHistory, UserDetails, AdminDashboard } from '../../pages';
+import AdminRoute from '../admin/AdminRoute';
 import { useUser } from '../../contexts/UserContext';
 
 const Layout: React.FC = () => {
@@ -46,8 +47,17 @@ const Layout: React.FC = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/user" element={<UserDetails />} />
+          <Route 
+            path="/admin" 
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            } 
+          />
         </Routes>
       </Container>
+
 
       <Footer />
     </Box>

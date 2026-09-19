@@ -3,11 +3,12 @@ from ..schemas.partialTransaction import PartialTransactions
 from ..crud import transaction as transactionCrud, transactionProduct as transactionProductCrud
 from sqlalchemy.orm import Session
 from app.utils.database import get_db, engine
-from ..schemas.transaction import Transactions
+from ..schemas.transaction import Transactions, TransactionStatusUpdate
 from ..schemas.partialTransactionProduct import PartialTransactionProducts
 from ..schemas.transactionProduct import TransactionProducts
 from ..models import transaction as transactionModel
 from ..crud import user as userCrud
+from ..utils import auth0
 from ..utils.logger import logger
 
 router = APIRouter()
@@ -18,6 +19,8 @@ path = '/transaction'
 
 async def _verify_transaction_owner(transaction_id: int, current_user: dict, db: Session):
     tx = await transactionCrud.getTransaction(transaction_id, db)
+    if auth0.is_admin_user(current_user):
+        return tx
     caller_sub = current_user.get("sub")
     if caller_sub and tx.user_id != caller_sub:
         raise HTTPException(
@@ -25,6 +28,20 @@ async def _verify_transaction_owner(transaction_id: int, current_user: dict, db:
             detail="Forbidden: you do not have access to this transaction"
         )
     return tx
+
+@router.get('/transactions', tags=['transactions'])
+async def getAllTransactions(
+    db: Session = Depends(get_db), 
+    current_admin: dict = Depends(userCrud.get_current_admin_user)
+):
+    try:
+        return await transactionCrud.getAllTransactions(db)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(e)
+        raise e
+
 
 @router.get(path + "/{transaction_id}", tags=['transactions'])
 async def getTransaction(
@@ -152,6 +169,21 @@ async def update(
     try:
         await _verify_transaction_owner(transaction_id, current_user, db)
         return await transactionCrud.update(transaction_id, transaction, db)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(e)
+        raise e
+
+@router.put(path + "/{transaction_id}/status", tags=['transactions'])
+async def updateTransactionStatus(
+    transaction_id: int, 
+    status_payload: TransactionStatusUpdate, 
+    db: Session = Depends(get_db), 
+    current_admin: dict = Depends(userCrud.get_current_admin_user)
+):
+    try:
+        return await transactionCrud.updateTransactionStatus(transaction_id, status_payload.order_status, db)
     except HTTPException:
         raise
     except Exception as e:

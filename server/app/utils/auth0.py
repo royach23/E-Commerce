@@ -207,3 +207,56 @@ def verify_token(token: str) -> dict:
         detail="Invalid or expired token",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+
+def extract_user_roles(payload: dict) -> list:
+    """Extract all assigned roles from token claims, custom namespaces, and permissions."""
+    if not payload or not isinstance(payload, dict):
+        return []
+
+    roles = set()
+
+    # 1. Check known and namespaced claim keys
+    for key, value in payload.items():
+        if key == "roles" or key.endswith("/roles") or key.endswith("/claims/roles"):
+            if isinstance(value, list):
+                for r in value:
+                    if isinstance(r, str):
+                        roles.add(r.strip())
+            elif isinstance(value, str):
+                roles.add(value.strip())
+
+    # 2. Check Auth0 permissions
+    permissions = payload.get("permissions")
+    if isinstance(permissions, list):
+        for p in permissions:
+            if isinstance(p, str):
+                roles.add(p.strip())
+
+    # 3. Check metadata objects
+    for meta_key in ("app_metadata", "user_metadata"):
+        meta = payload.get(meta_key)
+        if isinstance(meta, dict):
+            meta_roles = meta.get("roles")
+            if isinstance(meta_roles, list):
+                for r in meta_roles:
+                    if isinstance(r, str):
+                        roles.add(r.strip())
+            elif isinstance(meta_roles, str):
+                roles.add(meta_roles.strip())
+
+    return list(roles)
+
+
+def is_admin_user(payload: dict) -> bool:
+    """Check if the user has the admin role via token claims."""
+    if not payload or not isinstance(payload, dict):
+        return False
+
+    roles = extract_user_roles(payload)
+    for r in roles:
+        if r.lower() == "admin":
+            return True
+
+    return False
+

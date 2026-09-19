@@ -6,6 +6,8 @@ export interface User {
   address: string;
   phoneNumber: string;
   email: string;
+  isAdmin?: boolean;
+  roles?: string[];
 }
 
 export interface LoginResponse {
@@ -21,6 +23,8 @@ export interface UserJson {
   address?: string;
   phone_number?: string;
   email?: string;
+  is_admin?: boolean;
+  roles?: string[];
 }
 
 export function createUserFromJson(jsonData: UserJson): User {
@@ -32,6 +36,8 @@ export function createUserFromJson(jsonData: UserJson): User {
     address: jsonData.address || '',
     phoneNumber: jsonData.phone_number || '',
     email: jsonData.email || '',
+    isAdmin: Boolean(jsonData.is_admin),
+    roles: jsonData.roles || [],
   };
 
   return formattedUser;

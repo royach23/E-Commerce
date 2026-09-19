@@ -73,3 +73,16 @@ async def update(transaction_id: int, transaction, db):
     query.update(update_data, synchronize_session=False)
     db.commit()
     return query.first()
+
+async def getAllTransactions(db):
+    transactions = db.query(Transaction).options(
+        joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product)
+    ).order_by(Transaction.purchase_time.desc()).all()
+    return transactions
+
+async def updateTransactionStatus(transaction_id: int, order_status: OrderStatus, db):
+    transaction = await getTransaction(transaction_id, db)
+    transaction.order_status = order_status
+    db.commit()
+    db.refresh(transaction)
+    return transaction

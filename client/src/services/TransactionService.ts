@@ -36,6 +36,27 @@ export const TransactionService = {
         }
       },
 
+    async getAllTransactions(): Promise<Transaction[]> {
+      try {
+        const response = await api.get(`/transactions`);
+        return (response.data || []).map((tx: any) => mapJsonToTransaction(tx));
+      } catch (error) {
+        console.error('Error fetching all transactions:', error);
+        throw error;
+      }
+    },
+
+    async updateTransactionStatus(transactionId: number, orderStatus: string): Promise<Transaction> {
+      try {
+        const response = await api.put(`${TRANSACTION_URL}/${transactionId}/status`, {
+          order_status: orderStatus,
+        });
+        return mapJsonToTransaction(response.data);
+      } catch (error) {
+        console.error(`Error updating transaction ${transactionId} status:`, error);
+        throw error;
+      }
+    },
 };
 
 export default TransactionService;

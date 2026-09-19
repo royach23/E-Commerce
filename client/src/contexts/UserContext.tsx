@@ -23,15 +23,48 @@ interface UserContextType {
   deleteUser: (userId: string) => Promise<void>;
   updateUser: (user: User) => Promise<boolean>;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isLoading: boolean;
   auth0Error?: Error | null;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+const checkAdminRole = (userData?: User | null, auth0UserData?: any, claimsData?: any): boolean => {
+  if (userData?.isAdmin) return true;
+  const rolesSet = new Set<string>();
+  if (userData?.roles) {
+    userData.roles.forEach((r) => rolesSet.add(r.toLowerCase()));
+  }
+  const addRoles = (val: any) => {
+    if (Array.isArray(val)) {
+      val.forEach((r) => typeof r === 'string' && rolesSet.add(r.trim().toLowerCase()));
+    } else if (typeof val === 'string') {
+      rolesSet.add(val.trim().toLowerCase());
+    }
+  };
+
+  if (auth0UserData) {
+    Object.keys(auth0UserData).forEach((k) => {
+      if (k === 'roles' || k.endsWith('/roles') || k.endsWith('/claims/roles')) {
+        addRoles(auth0UserData[k]);
+      }
+    });
+  }
+  if (claimsData) {
+    Object.keys(claimsData).forEach((k) => {
+      if (k === 'roles' || k.endsWith('/roles') || k.endsWith('/claims/roles') || k === 'permissions') {
+        addRoles(claimsData[k]);
+      }
+    });
+  }
+  return rolesSet.has('admin') || rolesSet.has('administrator') || rolesSet.has('superadmin');
+};
+
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLocalLoading, setIsLocalLoading] = useState(true);
   const { dispatch: cartDispatch } = useCart();
 
@@ -59,6 +92,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isSyncingRef.current = false;
     setUser(null);
     setIsAuthenticated(false);
+    setIsAdmin(false);
     cartDispatch({ type: 'CLEAR_CART' });
 
     if (isAuth0Configured()) {
@@ -69,6 +103,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
     }
   }, [auth0Logout, cartDispatch]);
+
 
   // Sync Auth0 state with backend
   useEffect(() => {
@@ -149,14 +184,30 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             username: auth0User.nickname || auth0User.name,
           };
 
+          let claims: any = null;
+          try {
+            claims = await getIdTokenClaims();
+          } catch {
+            // ignore
+          }
+
           const syncedUser = await UserService.syncAuth0User(profileHints);
+          const adminStatus = checkAdminRole(syncedUser, auth0User as any, claims as any);
           if (isMounted) {
             lastSyncedSubRef.current = auth0User.sub;
             setUser(syncedUser);
             setIsAuthenticated(true);
+            setIsAdmin(adminStatus);
           }
         } catch (error) {
           console.error('Failed to sync Auth0 user with backend:', error);
+          let claims: any = null;
+          try {
+            claims = await getIdTokenClaims();
+          } catch {
+            // ignore
+          }
+          const adminStatus = checkAdminRole(null, auth0User as any, claims as any);
           // Fallback baseline user from Auth0 profile so UI continues to function
           if (isMounted && auth0User.sub) {
             lastSyncedSubRef.current = auth0User.sub;
@@ -168,8 +219,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               email: auth0User.email || '',
               address: '',
               phoneNumber: '',
+              isAdmin: adminStatus,
             });
             setIsAuthenticated(true);
+            setIsAdmin(adminStatus);
           }
         } finally {
           isSyncingRef.current = false;
@@ -179,6 +232,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           lastSyncedSubRef.current = null;
           setUser(null);
           setIsAuthenticated(false);
+          setIsAdmin(false);
           localStorage.removeItem('token');
         }
       }
@@ -242,12 +296,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       deleteUser,
       updateUser,
       isAuthenticated,
+      isAdmin,
       isLoading: auth0IsLoading || isLocalLoading,
       auth0Error
     }}>
       {children}
     </UserContext.Provider>
   );
+
 };
 
 export const useUser = () => {

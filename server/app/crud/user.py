@@ -23,6 +23,16 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         )
     return payload
 
+def get_current_admin_user(current_user: dict = Depends(get_current_user)) -> dict:
+    if not auth0.is_admin_user(current_user):
+        logger.warning(f"User {current_user.get('sub')} attempted admin action without admin role")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Forbidden: Administrator privileges required"
+        )
+    return current_user
+
+
 async def sync_or_create_user(current_user: dict, db, profile_data: Optional[Users] = None):
     user_id = current_user.get("sub")
     if not user_id:
@@ -108,6 +118,9 @@ async def sync_or_create_user(current_user: dict, db, profile_data: Optional[Use
             db.commit()
             db.refresh(db_user)
 
+    user_is_admin = auth0.is_admin_user(current_user)
+    user_roles = auth0.extract_user_roles(current_user)
+
     authenticated_user = UserDetails(
         user_id=db_user.user_id,
         username=db_user.username or "",
@@ -115,7 +128,9 @@ async def sync_or_create_user(current_user: dict, db, profile_data: Optional[Use
         last_name=db_user.last_name or "",
         address=db_user.address or "",
         phone_number=db_user.phone_number or "",
-        email=db_user.email or ""
+        email=db_user.email or "",
+        is_admin=user_is_admin,
+        roles=user_roles
     )
     return {"user": authenticated_user}
 

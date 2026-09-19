@@ -55,8 +55,18 @@ async def searchProducts(search_term, db):
     set_to_cache(f"search:{search_term}", products_data)
     return products
 
+async def getProductById(product_id: int, db):
+    product = db.query(Product).filter(Product.product_id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Product with id {product_id} not found")
+    return product
+
 async def createProduct(product, db):
-    new_product = Product(**product.dict())
+    product_data = product.dict(exclude_unset=True) if hasattr(product, 'dict') else dict(product)
+    # Ensure auto-incrementing ID is not overridden by None
+    if "product_id" in product_data and product_data["product_id"] is None:
+        del product_data["product_id"]
+    new_product = Product(**product_data)
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
@@ -64,24 +74,38 @@ async def createProduct(product, db):
     return new_product
 
 async def deleteProduct(product_id: int, db):
-    delete_product = db.query(Product).filter(Product.product_id == product_id)
-    delete_product_result = delete_product.first()
-    if delete_product_result == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"product with such id does not exist")
-    else:
-        delete_product.delete(synchronize_session=False)
+    product_query = db.query(Product).filter(Product.product_id == product_id)
+    product_result = product_query.first()
+    if product_result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product with such id does not exist")
+    
+    try:
+        product_query.delete(synchronize_session=False)
         db.commit()
+    except Exception as e:
+        db.rollback()
+        logger.warning(f"Could not delete product {product_id} due to database constraint: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Cannot delete product because it is part of existing customer order history. Please mark it as Out of Stock instead."
+        )
+    
     invalidate_product_caches()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-
 async def update(product_id: int, product, db):
-    updated_product = db.query(Product).filter(Product.product_id == product_id)
-    result = updated_product.first()
-    if result == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'product with such id: {product_id} does not exist')
-    else:
-        updated_product.update(product.dict(), synchronize_session=False)
-        db.commit()
+    query = db.query(Product).filter(Product.product_id == product_id)
+    existing = query.first()
+    if existing is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Product with id {product_id} does not exist')
+    
+    update_data = product.dict(exclude_unset=True) if hasattr(product, 'dict') else dict(product)
+    update_data.pop("product_id", None)
+    
+    for key, value in update_data.items():
+        setattr(existing, key, value)
+        
+    db.commit()
+    db.refresh(existing)
     invalidate_product_caches()
-    return updated_product.first()
+    return existing
