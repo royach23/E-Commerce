@@ -23,32 +23,24 @@ import {
   Logout as LogoutIcon,
   AccountCircle as AccountIcon,
   ReceiptLong as OrderHistoryIcon,
-  Person as UserDetailsIcon
+  Person as UserDetailsIcon,
+  AdminPanelSettings as AdminIcon
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import { useUser } from '../../contexts/UserContext';
-import LoginModal from '../users/LoginModal';
 import Logo from '../../assets/logo.svg';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { state: { items: cartItems } } = useCart();
-  const { isAuthenticated, logout } = useUser();
+  const { isAuthenticated, isAdmin, logout, login } = useUser();
   const navigate = useNavigate();
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
-
-  const handleOpenLoginModal = () => {
-    setLoginModalOpen(true);
-  };
-
-  const handleCloseLoginModal = () => {
-    setLoginModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -75,6 +67,11 @@ const Header: React.FC = () => {
     handleMenuClose();
   };
 
+  const handleNavigateToAdmin = () => {
+    navigate('/admin');
+    handleMenuClose();
+  };
+
   const menuItems = [
     { 
       text: 'Home', 
@@ -85,7 +82,12 @@ const Header: React.FC = () => {
       text: 'Products', 
       icon: <ProductsIcon />, 
       path: '/products' 
-    }
+    },
+    ...(isAdmin ? [{
+      text: 'Admin Dashboard',
+      icon: <AdminIcon />,
+      path: '/admin'
+    }] : [])
   ];
 
   const drawer = (
@@ -190,6 +192,15 @@ const Header: React.FC = () => {
                 }}
                 
               >
+                {isAdmin && (
+                  <MenuItem 
+                    onClick={handleNavigateToAdmin} 
+                    sx={{color: 'primary.main', fontSize: '1.2em', fontWeight: 'bold'}}
+                  >
+                    <AdminIcon sx={{ mr: 1, fontSize: '1.2em'}} />
+                    Admin Dashboard
+                  </MenuItem>
+                )}
                 <MenuItem 
                   onClick={handleNavigateToUserDetails} 
                   sx={{color: 'primary.main', fontSize: '1.2em'}}
@@ -208,10 +219,11 @@ const Header: React.FC = () => {
               </Menu>
             </>
           ) : (
+
             <Button
               color="inherit"
               startIcon={<LoginIcon />}
-              onClick={handleOpenLoginModal}
+              onClick={() => login()}
               sx={{mx: 1, fontSize: '1.4em', 
                 '&:hover': {
                   color: 'secondary.main',
@@ -256,11 +268,6 @@ const Header: React.FC = () => {
       >
         {drawer}
       </Drawer>
-
-      <LoginModal 
-        open={loginModalOpen} 
-        onClose={handleCloseLoginModal} 
-      />
     </>
   );
 };

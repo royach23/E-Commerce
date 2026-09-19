@@ -85,6 +85,7 @@ const OrderHistoryPage: React.FC = () => {
               <TableRow sx={{textAlign: 'center'}}>
                 <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Order ID</TableCell>
                 <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Purchase Date</TableCell>
+                <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Shipping Address</TableCell>
                 <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Total Price</TableCell>
                 <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Status</TableCell>
                 <TableCell sx={{color: 'primary.main', textAlign: 'center', fontWeight: 'bold', fontSize: '1.4em'}}>Items</TableCell>
@@ -96,6 +97,9 @@ const OrderHistoryPage: React.FC = () => {
                   <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>#{transaction.transactionId}</TableCell>
                   <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>
                     {new Date(transaction.purchaseTime).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.1em'}}>
+                    {transaction.address || '—'}
                   </TableCell>
                   <TableCell sx={{color: 'primary.main', textAlign: 'center', fontSize: '1.2em'}}>
                     ${transaction.cart?.total.toFixed(2)}

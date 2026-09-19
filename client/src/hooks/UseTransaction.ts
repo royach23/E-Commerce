@@ -13,7 +13,7 @@ export const useTransaction = () => {
   const { state: cart, dispatch: cartDispatch } = useCart();
   const { user } = useUser();
 
-  const createTransaction = async () => {
+  const createTransaction = async (shippingAddress?: string) => {
     if (!user) {
       setError('User not authenticated');
       return null;
@@ -28,7 +28,8 @@ export const useTransaction = () => {
       setIsLoading(true);
       setError(null);
 
-      const newTransaction = await TransactionService.createNewTransaction(user.id!, cart.total);
+      const addressToUse = shippingAddress || user.address;
+      const newTransaction = await TransactionService.createNewTransaction(user.id!, cart.total, addressToUse);
 
       for (const item of cart.items) {
         await TransactionService.createNewTransactionProduct(item, newTransaction.transactionId);

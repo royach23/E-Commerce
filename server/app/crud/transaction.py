@@ -6,21 +6,46 @@ from sqlalchemy.orm import joinedload
 from datetime import datetime
 import pytz
 
-async def getTransaction(transaction_id: int, db):
-    transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).options(joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product))
-    result = transaction.first()
-    if result == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'transaction with such id: {transaction_id} does not exist')
-    return transaction.first()
+from ..models.user import User
 
-async def getUserTransactions(user_id: int, db):
-    transaction = db.query(Transaction).filter(Transaction.user_id == user_id).options(joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product))
+async def getTransaction(transaction_id: int, db):
+    transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id).options(
+        joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product)
+    )
+    result = transaction.first()
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f'Transaction with id {transaction_id} does not exist'
+        )
+    return result
+
+async def getUserTransactions(user_id: str, db):
+    transaction = db.query(Transaction).filter(Transaction.user_id == user_id).options(
+        joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product)
+    ).order_by(Transaction.purchase_time.desc())
     if not transaction:
         return []
     return transaction.all()
 
 async def createTransaction(transaction, db):
-    new_transaction = Transaction(**transaction.dict(), order_status= OrderStatus.PENDING.value)
+    user = db.query(User).filter(User.user_id == transaction.user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User with id {transaction.user_id} does not exist"
+        )
+    shipping_address = getattr(transaction, 'address', None) or user.address
+    if not ((user.first_name or user.username) and user.phone_number and shipping_address):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incomplete user profile. Please provide your name, phone number, and address before placing an order."
+        )
+
+    tx_data = transaction.dict() if hasattr(transaction, 'dict') else dict(transaction)
+    tx_data['address'] = shipping_address
+
+    new_transaction = Transaction(**tx_data, order_status=OrderStatus.PENDING.value)
     new_transaction.purchase_time = datetime.now(pytz.timezone('Israel')).isoformat()
     db.add(new_transaction)
     db.commit()
@@ -30,20 +55,37 @@ async def createTransaction(transaction, db):
 async def deleteTransaction(transaction_id: int, db):
     delete_transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id)
     delete_transaction_result = delete_transaction.first()
-    if delete_transaction_result == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"transaction with such id does not exist")
-    else:
-        delete_transaction.delete(synchronize_session=False)
-        db.commit()
+    if delete_transaction_result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Transaction with id {transaction_id} does not exist"
+        )
+    delete_transaction.delete(synchronize_session=False)
+    db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-
 async def update(transaction_id: int, transaction, db):
-    updated_transaction = db.query(Transaction).filter(Transaction.transaction_id == transaction_id)
-    updated_transaction.first()
-    if updated_transaction == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'transaction with such id: {id} does not exist')
-    else:
-        updated_transaction.update(transaction.dict(), synchronize_session=False)
-        db.commit()
-    return updated_transaction.first()
+    query = db.query(Transaction).filter(Transaction.transaction_id == transaction_id)
+    existing = query.first()
+    if existing is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f'Transaction with id {transaction_id} does not exist'
+        )
+    update_data = transaction.dict() if hasattr(transaction, 'dict') else dict(transaction)
+    query.update(update_data, synchronize_session=False)
+    db.commit()
+    return query.first()
+
+async def getAllTransactions(db):
+    transactions = db.query(Transaction).options(
+        joinedload(Transaction.transaction_products).joinedload(TransactionProduct.product)
+    ).order_by(Transaction.purchase_time.desc()).all()
+    return transactions
+
+async def updateTransactionStatus(transaction_id: int, order_status: OrderStatus, db):
+    transaction = await getTransaction(transaction_id, db)
+    transaction.order_status = order_status
+    db.commit()
+    db.refresh(transaction)
+    return transaction
