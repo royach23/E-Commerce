@@ -1,237 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Container, 
   Typography, 
-  TextField, 
   Button, 
-  Box 
+  Box,
+  Card,
+  CardContent
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { User } from '../types/User';
+import { PersonAdd as RegisterIcon } from '@mui/icons-material';
 import { useUser } from '../contexts/UserContext';
 
-type ValidationErrors = Partial<Record<keyof User, string>> & { 
-  submit?: string 
-};
-
 const RegisterPage: React.FC = () => {
-  const [formData, setFormData] = useState<User>({
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    phoneNumber: '',
-    email: ''
-  });
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const navigate = useNavigate();
   const { register } = useUser();
-
-  const validateField = (name: keyof User, value: string | number | undefined) => {
-    if (typeof value === 'number') {
-      return value.toString();
-    }
-
-    switch (name) {
-      case 'username':
-        if (!value) return 'Username is required';
-        if (value.length < 3) return 'Username must be at least 3 characters long';
-        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Username can only contain letters, numbers, and underscores';
-        return '';
-
-      case 'password':
-        if (!value) return 'Password is required';
-        if (value.length < 8) return 'Password must be at least 8 characters long';
-        if (!/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])/.test(value)) 
-          return 'Password must include uppercase, lowercase, number, and special character';
-        return '';
-
-      case 'email':
-        { if (!value) return 'Email is required';
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) return 'Please enter a valid email address';
-        return ''; }
-
-      case 'firstName':
-        if (!value) return 'First name is required';
-        if (value.length < 2) return 'First name must be at least 2 characters long';
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
-        return '';
-
-      case 'lastName':
-        if (!value) return 'Last name is required';
-        if (value.length < 2) return 'Last name must be at least 2 characters long';
-        if (!/^[a-zA-Z\s'-]+$/.test(value)) return 'Name can only contain letters, spaces, hyphens, and apostrophes';
-        return '';
-
-      case 'phoneNumber':
-        { if (!value) return 'Phone number is required';
-        const phoneRegex = /^\+?[\d\s()-]{10,15}$/;
-        if (!phoneRegex.test(value)) return 'Please enter a valid phone number';
-        return ''; }
-
-      case 'address':
-        if (!value) return 'Address is required';
-        if (value.trim().length < 5) return 'Please provide a valid address';
-        return '';
-
-      default:
-        return '';
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    const fieldError = validateField(name as keyof User, value);
-    setErrors(prev => ({
-      ...prev,
-      [name]: fieldError
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors: ValidationErrors = {};
-    
-    (Object.keys(formData) as Array<keyof User>).forEach(key => {
-      const error = validateField(key, formData[key]);
-      if (error) newErrors[key] = error;
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      try {
-        await register(formData);
-        navigate('/');
-      } catch (err) {
-        setErrors(prev => ({
-          ...prev,
-          submit: 'Registration failed. Please check your information and try again.'
-        }));
-        console.error(err);
-      }
-    }
-  };
 
   return (
     <Container maxWidth="sm">
       <Box 
         sx={{ 
-          marginTop: 8, 
+          marginTop: 10, 
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
         }}
       >
-        <Typography component="h1" variant="h3" color='primary'>
-          Register
-        </Typography>
-        <Box 
-          component="form" 
-          onSubmit={handleSubmit} 
-          sx={{ mt: 3, width: '100%' }}
-          color='primary'
-        >
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            error={!!errors.username}
-            helperText={errors.username}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="First Name"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            error={!!errors.firstName}
-            helperText={errors.firstName}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Last Name"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            error={!!errors.lastName}
-            helperText={errors.lastName}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            error={!!errors.address}
-            helperText={errors.address}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            label="Phone Number"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            error={!!errors.phoneNumber}
-            helperText={errors.phoneNumber}
-          />
-          {errors.submit && <Typography color="error">{errors.submit}</Typography>}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Register
-          </Button>
-        </Box>
+        <Card sx={{ width: '100%', p: 4, textAlign: 'center', borderRadius: 3, boxShadow: 3 }}>
+          <CardContent>
+            <Typography component="h1" variant="h4" color='primary' fontWeight="bold" gutterBottom>
+              Create an Account
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 2, mb: 4 }}>
+              Join Sock Haven to start shopping. All registration and authentication is managed securely with Auth0.
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              startIcon={<RegisterIcon />}
+              onClick={() => register()}
+              sx={{ py: 1.8, fontSize: '1.1rem' }}
+            >
+              Sign Up with Auth0
+            </Button>
+          </CardContent>
+        </Card>
       </Box>
     </Container>
   );

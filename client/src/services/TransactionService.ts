@@ -5,12 +5,15 @@ import { CartItem } from '../types/Cart';
 const TRANSACTION_URL = `/transaction`;
 
 export const TransactionService = {
-    async createNewTransaction(userId: number, total: number): Promise<Transaction> {
+    async createNewTransaction(userId: string | number, total: number, address?: string): Promise<Transaction> {
       try {
-        const transactionPayload = {
-            user_id: userId,
+        const transactionPayload: { user_id: string; total_price: number; address?: string } = {
+            user_id: String(userId),
             total_price: total,
-          };
+        };
+        if (address) {
+            transactionPayload.address = address;
+        }
 
         const response = await api.post(TRANSACTION_URL, transactionPayload);
         return mapJsonToTransaction(response.data);
@@ -36,6 +39,27 @@ export const TransactionService = {
         }
       },
 
+    async getAllTransactions(): Promise<Transaction[]> {
+      try {
+        const response = await api.get(`/transactions`);
+        return (response.data || []).map((tx: any) => mapJsonToTransaction(tx));
+      } catch (error) {
+        console.error('Error fetching all transactions:', error);
+        throw error;
+      }
+    },
+
+    async updateTransactionStatus(transactionId: number, orderStatus: string): Promise<Transaction> {
+      try {
+        const response = await api.put(`${TRANSACTION_URL}/${transactionId}/status`, {
+          order_status: orderStatus,
+        });
+        return mapJsonToTransaction(response.data);
+      } catch (error) {
+        console.error(`Error updating transaction ${transactionId} status:`, error);
+        throw error;
+      }
+    },
 };
 
 export default TransactionService;

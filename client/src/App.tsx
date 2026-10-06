@@ -6,19 +6,22 @@ import Layout from './components/layout/Layout';
 import { ProductProvider } from './contexts/ProductContext';
 import { CartProvider } from './contexts/CartContext';
 import { UserProvider } from './contexts/UserContext';
+import Auth0ProviderWithConfig from './contexts/Auth0ProviderWithConfig';
 
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <ProductProvider>
-          <UserProvider>
-            <CartProvider>
-              <Layout />
-            </CartProvider>
-          </UserProvider>
-        </ProductProvider>
+        <Auth0ProviderWithConfig>
+          <ProductProvider>
+            <UserProvider>
+              <CartProvider>
+                <Layout />
+              </CartProvider>
+            </UserProvider>
+          </ProductProvider>
+        </Auth0ProviderWithConfig>
       </Router>
     </ThemeProvider>
   );

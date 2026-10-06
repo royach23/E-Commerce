@@ -7,3 +7,4 @@ export { default as Register } from './RegisterPage';
 export { default as OrderCompletion } from './OrderCompletionPage';
 export { default as OrderHistory } from './OrderHistory';
 export { default as UserDetails } from './UserDetailsPage';
+export { default as AdminDashboard } from './AdminDashboardPage';

@@ -50,6 +50,9 @@ const OrderCompletion: React.FC = () => {
           Total Amount: ${orderDetails.total?.toFixed(2) || 'N/A'}
         </Typography>
         <Typography variant="body1" color='primary'>
+          Shipping Address: {orderDetails.address || 'N/A'}
+        </Typography>
+        <Typography variant="body1" color='primary'>
           Estimated Delivery: {orderDetails.estimatedDelivery || 'Within 5-7 business days'}
         </Typography>
       </Box>

@@ -45,6 +45,12 @@ const Checkout: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
+  const isProfileComplete = Boolean(
+    (user?.firstName?.trim() || user?.username?.trim()) &&
+    user?.phoneNumber?.trim() &&
+    user?.address?.trim()
+  );
+
   const [formData, setFormData] = useState<CheckoutFormData>({
     cardName: '',
     cardNumber: '',
@@ -142,10 +148,16 @@ const Checkout: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!isProfileComplete) {
+      setSnackbarMessage('Please complete your profile (first name, last name, phone number, and address) before placing an order.');
+      setOpenSnackbar(true);
+      return;
+    }
+
     if (validateForm()) {
       setIsSubmitting(true);
       try {
-        const transaction = await createTransaction();
+        const transaction = await createTransaction(user?.address);
         
         if (transaction) {
           navigate('/order-completion', {
@@ -153,6 +165,7 @@ const Checkout: React.FC = () => {
               orderDetails: {
                 orderId: transaction.transactionId,
                 total: transaction.cart?.total,
+                address: transaction.address || user?.address,
                 estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()
               }
             }
@@ -372,6 +385,20 @@ const Checkout: React.FC = () => {
         </Typography>
       ) : (
         <>
+          {!isProfileComplete && (
+            <Alert 
+              severity="warning" 
+              sx={{ mb: 3 }}
+              action={
+                <Button color="inherit" size="small" onClick={() => navigate('/user')}>
+                  Update Profile
+                </Button>
+              }
+            >
+              You must complete your shipping details (first name, last name, phone number, and address) before placing an order.
+            </Alert>
+          )}
+
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map((label, index) => (
               <Step key={label} >
@@ -409,7 +436,7 @@ const Checkout: React.FC = () => {
               variant="contained" 
               color="primary" 
               onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
-              disabled={isSubmitting}
+              disabled={isSubmitting || (activeStep === steps.length - 1 && !isProfileComplete)}
             >
               {activeStep === steps.length - 1 
                 ? (isSubmitting ? 'Placing Order...' : 'Place Order') 
