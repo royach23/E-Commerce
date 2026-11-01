@@ -1,18 +1,19 @@
-import React, { 
-  createContext, 
-  useState, 
-  useContext, 
+import { useAuth0 } from "@auth0/auth0-react";
+import React, {
+  createContext,
   ReactNode,
+  useCallback,
+  useContext,
   useEffect,
   useRef,
-  useCallback
-} from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { User } from '../types/User';
-import UserService from '../services/UserService';
-import { useCart } from './CartContext';
-import { Transaction } from '../types/Transaction';
-import { isAuth0Configured } from './Auth0ProviderWithConfig';
+  useState,
+} from "react";
+import api from "../api/api";
+import UserService from "../services/UserService";
+import { Transaction } from "../types/Transaction";
+import { User } from "../types/User";
+import { isAuth0Configured } from "./Auth0ProviderWithConfig";
+import { useCart } from "./CartContext";
 
 interface UserContextType {
   user: User | null;
@@ -29,37 +30,6 @@ interface UserContextType {
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
-
-const checkAdminRole = (userData?: User | null, auth0UserData?: any, claimsData?: any): boolean => {
-  if (userData?.isAdmin) return true;
-  const rolesSet = new Set<string>();
-  if (userData?.roles) {
-    userData.roles.forEach((r) => rolesSet.add(r.toLowerCase()));
-  }
-  const addRoles = (val: any) => {
-    if (Array.isArray(val)) {
-      val.forEach((r) => typeof r === 'string' && rolesSet.add(r.trim().toLowerCase()));
-    } else if (typeof val === 'string') {
-      rolesSet.add(val.trim().toLowerCase());
-    }
-  };
-
-  if (auth0UserData) {
-    Object.keys(auth0UserData).forEach((k) => {
-      if (k === 'roles' || k.endsWith('/roles') || k.endsWith('/claims/roles')) {
-        addRoles(auth0UserData[k]);
-      }
-    });
-  }
-  if (claimsData) {
-    Object.keys(claimsData).forEach((k) => {
-      if (k === 'roles' || k.endsWith('/roles') || k.endsWith('/claims/roles') || k === 'permissions') {
-        addRoles(claimsData[k]);
-      }
-    });
-  }
-  return rolesSet.has('admin') || rolesSet.has('administrator') || rolesSet.has('superadmin');
-};
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -79,57 +49,36 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     loginWithRedirect,
     logout: auth0Logout,
     getAccessTokenSilently,
-    getIdTokenClaims
+    getIdTokenClaims,
   } = useAuth0();
 
   if (auth0Error) {
-    console.error('Auth0 Authentication Error:', auth0Error);
+    console.error("Auth0 Authentication Error:", auth0Error);
   }
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
+  const logout = useCallback(async () => {
     lastSyncedSubRef.current = null;
     isSyncingRef.current = false;
     setUser(null);
     setIsAuthenticated(false);
     setIsAdmin(false);
-    cartDispatch({ type: 'CLEAR_CART' });
+    cartDispatch({ type: "CLEAR_CART" });
+    await api.post("/user/logout").catch(() => {});
 
     if (isAuth0Configured()) {
       auth0Logout({
         logoutParams: {
-          returnTo: window.location.origin
-        }
+          returnTo: window.location.origin,
+        },
       });
     }
   }, [auth0Logout, cartDispatch]);
-
 
   // Sync Auth0 state with backend
   useEffect(() => {
     let isMounted = true;
 
     const syncAuth = async () => {
-      if (!isAuth0Configured()) {
-        // Fallback for development before Auth0 is configured
-        const localToken = localStorage.getItem('token');
-        if (localToken) {
-          try {
-            const response = await UserService.verifyToken();
-            if (isMounted) {
-              setUser(response.user);
-              setIsAuthenticated(true);
-            }
-          } catch {
-            if (isMounted) {
-              logout();
-            }
-          }
-        }
-        if (isMounted) setIsLocalLoading(false);
-        return;
-      }
-
       if (auth0IsLoading) {
         return;
       }
@@ -148,32 +97,28 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isSyncingRef.current = true;
 
         try {
-          let token = '';
+          let token = "";
           const audience = import.meta.env.VITE_AUTH0_AUDIENCE?.trim();
-          
+
           try {
             const rawToken = await getAccessTokenSilently(
-              audience ? { authorizationParams: { audience } } : undefined
+              audience ? { authorizationParams: { audience } } : undefined,
             );
-            token = rawToken || '';
+            token = rawToken || "";
           } catch (tokenErr) {
-            console.warn('Could not get silent access token:', tokenErr);
+            console.warn("Could not get silent access token:", tokenErr);
           }
 
           // If token is missing or opaque (not a 3-part JWT), fallback to raw ID token
-          if (!token || token.split('.').length !== 3) {
+          if (!token || token.split(".").length !== 3) {
             try {
               const claims = await getIdTokenClaims();
               if (claims?.__raw) {
                 token = claims.__raw;
               }
             } catch (claimsErr) {
-              console.warn('Could not get id token claims:', claimsErr);
+              console.warn("Could not get id token claims:", claimsErr);
             }
-          }
-
-          if (token) {
-            localStorage.setItem('token', token);
           }
 
           // Pass user profile hints to ensure backend database has real name and email
@@ -184,55 +129,48 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             username: auth0User.nickname || auth0User.name,
           };
 
-          let claims: any = null;
-          try {
-            claims = await getIdTokenClaims();
-          } catch {
-            // ignore
-          }
-
-          const syncedUser = await UserService.syncAuth0User(profileHints);
-          const adminStatus = checkAdminRole(syncedUser, auth0User as any, claims as any);
+          const syncedUser = await UserService.syncAuth0User(profileHints, token);
           if (isMounted) {
             lastSyncedSubRef.current = auth0User.sub;
             setUser(syncedUser);
             setIsAuthenticated(true);
-            setIsAdmin(adminStatus);
+            setIsAdmin(Boolean(syncedUser.isAdmin));
           }
         } catch (error) {
-          console.error('Failed to sync Auth0 user with backend:', error);
-          let claims: any = null;
-          try {
-            claims = await getIdTokenClaims();
-          } catch {
-            // ignore
-          }
-          const adminStatus = checkAdminRole(null, auth0User as any, claims as any);
+          console.error("Failed to sync Auth0 user with backend:", error);
           // Fallback baseline user from Auth0 profile so UI continues to function
           if (isMounted && auth0User.sub) {
             setUser((prev) => ({
               id: auth0User.sub,
-              username: auth0User.nickname || auth0User.name || prev?.username || '',
-              firstName: auth0User.given_name || prev?.firstName || '',
-              lastName: auth0User.family_name || prev?.lastName || '',
-              email: auth0User.email || prev?.email || '',
-              address: prev?.address || '',
-              phoneNumber: prev?.phoneNumber || '',
-              isAdmin: adminStatus,
+              username: auth0User.nickname || auth0User.name || prev?.username || "",
+              firstName: auth0User.given_name || prev?.firstName || "",
+              lastName: auth0User.family_name || prev?.lastName || "",
+              email: auth0User.email || prev?.email || "",
+              address: prev?.address || "",
+              phoneNumber: prev?.phoneNumber || "",
+              isAdmin: false,
             }));
             setIsAuthenticated(true);
-            setIsAdmin(adminStatus);
+            setIsAdmin(false);
           }
         } finally {
           isSyncingRef.current = false;
         }
       } else {
-        if (isMounted) {
-          lastSyncedSubRef.current = null;
-          setUser(null);
-          setIsAuthenticated(false);
-          setIsAdmin(false);
-          localStorage.removeItem('token');
+        try {
+          const response = await UserService.verifyToken();
+          if (isMounted) {
+            setUser(response.user);
+            setIsAuthenticated(true);
+            setIsAdmin(Boolean(response.user.isAdmin));
+          }
+        } catch {
+          if (isMounted) {
+            lastSyncedSubRef.current = null;
+            setUser(null);
+            setIsAuthenticated(false);
+            setIsAdmin(false);
+          }
         }
       }
 
@@ -246,14 +184,23 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return () => {
       isMounted = false;
     };
-  }, [auth0IsAuthenticated, auth0User, auth0IsLoading, getAccessTokenSilently, getIdTokenClaims, logout]);
+  }, [
+    auth0IsAuthenticated,
+    auth0User,
+    auth0IsLoading,
+    getAccessTokenSilently,
+    getIdTokenClaims,
+    logout,
+  ]);
 
   const login = async () => {
     if (isAuth0Configured()) {
       await loginWithRedirect();
     } else {
-      console.warn('Auth0 is not yet configured. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID in client/.env');
-      alert('Auth0 is not yet configured with your credentials. Please add them to client/.env');
+      console.warn(
+        "Auth0 is not yet configured. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID in client/.env",
+      );
+      alert("Auth0 is not yet configured with your credentials. Please add them to client/.env");
     }
   };
 
@@ -261,12 +208,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (isAuth0Configured()) {
       await loginWithRedirect({
         authorizationParams: {
-          screen_hint: 'signup',
-        }
+          screen_hint: "signup",
+        },
       });
     } else {
-      console.warn('Auth0 is not yet configured. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID in client/.env');
-      alert('Auth0 is not yet configured with your credentials. Please add them to client/.env');
+      console.warn(
+        "Auth0 is not yet configured. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID in client/.env",
+      );
+      alert("Auth0 is not yet configured with your credentials. Please add them to client/.env");
     }
   };
 
@@ -286,29 +235,30 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <UserContext.Provider value={{ 
-      user, 
-      login, 
-      logout, 
-      register,
-      getUserTransactions,
-      deleteUser,
-      updateUser,
-      isAuthenticated,
-      isAdmin,
-      isLoading: auth0IsLoading || isLocalLoading,
-      auth0Error
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        register,
+        getUserTransactions,
+        deleteUser,
+        updateUser,
+        isAuthenticated,
+        isAdmin,
+        isLoading: auth0IsLoading || isLocalLoading,
+        auth0Error,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
-
 };
 
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };

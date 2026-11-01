@@ -17,7 +17,7 @@ import { useUser } from '../contexts/UserContext';
 import { Transaction } from '../types/Transaction';
 
 const OrderHistoryPage: React.FC = () => {
-  const { user, getUserTransactions } = useUser();
+  const { user, isLoading: isUserLoading, getUserTransactions } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,11 +35,13 @@ const OrderHistoryPage: React.FC = () => {
           setError('Failed to fetch order history');
           setIsLoading(false);
         }
+      } else if (!isUserLoading) {
+        setIsLoading(false);
       }
     };
 
     fetchTransactions();
-  }, [user, getUserTransactions]);
+  }, [user, isUserLoading, getUserTransactions]);
 
   const getStatusColor = (status: string) => {
     switch(status.toLowerCase()) {
@@ -50,7 +52,7 @@ const OrderHistoryPage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isUserLoading) {
     return (
       <Container>
         <Box display="flex" justifyContent="center" alignItems="center" height="100vh">

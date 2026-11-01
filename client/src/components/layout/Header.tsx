@@ -35,7 +35,7 @@ const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { state: { items: cartItems } } = useCart();
-  const { isAuthenticated, isAdmin, logout, login } = useUser();
+  const { isAuthenticated, isAdmin, isLoading, logout, login } = useUser();
   const navigate = useNavigate();
 
 
@@ -166,7 +166,7 @@ const Header: React.FC = () => {
             ))}
           </Box>
 
-          {isAuthenticated ? (
+          {!isLoading && (isAuthenticated ? (
             <>
               <IconButton
                 color="inherit"
@@ -232,7 +232,7 @@ const Header: React.FC = () => {
             >
               Login
             </Button>
-          )}
+          ))}
 
           <IconButton 
             color="inherit"
