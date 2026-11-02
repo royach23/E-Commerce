@@ -1,35 +1,35 @@
-import React, { useState } from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Button, 
-  IconButton, 
-  Badge, 
-  Drawer, 
-  List, 
-  ListItem, 
-  ListItemText,
-  Box,
-  MenuItem,
-  Menu
-} from '@mui/material';
-import { 
-  Menu as MenuIcon, 
-  ShoppingCart as CartIcon, 
-  Home as HomeIcon, 
-  Storefront as ProductsIcon,
+import {
+  AccountCircle as AccountIcon,
+  AdminPanelSettings as AdminIcon,
+  ShoppingCart as CartIcon,
+  Home as HomeIcon,
   Login as LoginIcon,
   Logout as LogoutIcon,
-  AccountCircle as AccountIcon,
+  Menu as MenuIcon,
   ReceiptLong as OrderHistoryIcon,
-  Person as UserDetailsIcon,
-  AdminPanelSettings as AdminIcon
+  Storefront as ProductsIcon,
+  Person as UserDetailsIcon
 } from '@mui/icons-material';
+import {
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
+} from '@mui/material';
+import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import Logo from '../../assets/logo.svg';
 import { useCart } from '../../contexts/CartContext';
 import { useUser } from '../../contexts/UserContext';
-import Logo from '../../assets/logo.svg';
 
 const Header: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -67,10 +67,6 @@ const Header: React.FC = () => {
     handleMenuClose();
   };
 
-  const handleNavigateToAdmin = () => {
-    navigate('/admin');
-    handleMenuClose();
-  };
 
   const menuItems = [
     { 
@@ -192,15 +188,6 @@ const Header: React.FC = () => {
                 }}
                 
               >
-                {isAdmin && (
-                  <MenuItem 
-                    onClick={handleNavigateToAdmin} 
-                    sx={{color: 'primary.main', fontSize: '1.2em', fontWeight: 'bold'}}
-                  >
-                    <AdminIcon sx={{ mr: 1, fontSize: '1.2em'}} />
-                    Admin Dashboard
-                  </MenuItem>
-                )}
                 <MenuItem 
                   onClick={handleNavigateToUserDetails} 
                   sx={{color: 'primary.main', fontSize: '1.2em'}}
