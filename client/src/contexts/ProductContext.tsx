@@ -70,12 +70,6 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    if (location.pathname === '/') {
-      fetchProducts();
-    }
   }, [location.pathname]);
 
   return (
