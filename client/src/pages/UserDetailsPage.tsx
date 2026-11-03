@@ -12,14 +12,15 @@ import {
   DialogContent, 
   DialogActions,
   Snackbar,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import { useUser } from '../contexts/UserContext';
 import { User } from '../types/User';
 import { useNavigate } from 'react-router-dom';
 
 const UserDetailsPage: React.FC = () => {
-  const { user, updateUser, deleteUser } = useUser();
+  const { user, isLoading, updateUser, deleteUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [updatedUser, setUpdatedUser] = useState<Partial<User>>({});
@@ -28,6 +29,14 @@ const UserDetailsPage: React.FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="60vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (!user) {
     return (

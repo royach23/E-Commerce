@@ -5,7 +5,7 @@ import { mapJsonToTransactions, Transaction } from '../types/Transaction';
 const USER_URL = `/user`;
 
 export const UserService = {
-  async syncAuth0User(profileData?: Partial<User>): Promise<User> {
+  async syncAuth0User(profileData?: Partial<User>, token?: string): Promise<User> {
     try {
       const payload = profileData ? {
         email: profileData.email,
@@ -14,7 +14,9 @@ export const UserService = {
         username: profileData.username,
       } : undefined;
 
-      const response = await api.post(`${USER_URL}/sync`, payload);
+      const response = await api.post(`${USER_URL}/sync`, payload, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
       return createUserFromJson(response.data.user);
     } catch (error) {
       console.error('Error syncing Auth0 user:', error);

@@ -6,14 +6,12 @@ from ..models.user import User
 from ..schemas.userDetails import UserDetails
 from ..models.transaction import Transaction
 from ..models.transactionProduct import TransactionProduct
-from fastapi import HTTPException, status, Response, Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException, status, Response, Request, Depends
 from ..utils import auth0
 from ..utils.logger import logger
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
+def get_current_user(request: Request) -> dict:
+    token = request.cookies.get("token")
     payload = auth0.verify_token(token)
     if not payload or "sub" not in payload:
         raise HTTPException(

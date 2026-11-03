@@ -14,7 +14,8 @@ import {
   Step,
   StepLabel,
   Snackbar,
-  Alert
+  Alert,
+  CircularProgress
 } from '@mui/material';
 import { useUser } from '../contexts/UserContext';
 import { useTransaction } from '../hooks/UseTransaction';
@@ -37,7 +38,7 @@ interface FormErrors {
 }
 
 const Checkout: React.FC = () => {
-  const { user, isAuthenticated } = useUser(); 
+  const { user, isAuthenticated, isLoading } = useUser(); 
   const { createTransaction } = useTransaction();
   const [activeStep, setActiveStep] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -374,7 +375,11 @@ const Checkout: React.FC = () => {
         Checkout
       </Typography>
 
-      {!isAuthenticated ? (
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" height="40vh">
+          <CircularProgress />
+        </Box>
+      ) : !isAuthenticated ? (
         <Typography 
           variant="h5" 
           align="center" 

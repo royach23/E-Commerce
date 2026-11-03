@@ -1,8 +1,9 @@
 from typing import Optional
 from urllib.parse import unquote
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.orm import Session
 from ..crud import user as userCrud, transaction as transactionCrud
+from ..utils import auth0
 from ..utils.database import get_db, engine
 from ..schemas.user import Users
 from ..models import user as userModel
@@ -37,17 +38,35 @@ async def getUserTransactions(
 
 @router.post(path + "/sync", tags=['users'])
 async def syncUser(
+    request: Request,
+    response: Response,
     user_data: Optional[Users] = None,
-    db: Session = Depends(get_db), 
-    current_user: dict = Depends(userCrud.get_current_user)
+    db: Session = Depends(get_db)
 ):
     try:
-        return await userCrud.sync_or_create_user(current_user, db, profile_data=user_data)
+        auth_header = request.headers.get("Authorization", "")
+        token = auth_header.split(" ", 1)[1] if auth_header.startswith("Bearer ") else request.cookies.get("token")
+        current_user = auth0.verify_token(token)
+        result = await userCrud.sync_or_create_user(current_user, db, profile_data=user_data)
+        if token:
+            response.set_cookie(
+                key="token",
+                value=token,
+                httponly=True,
+                samesite="lax",
+                path="/"
+            )
+        return result
     except HTTPException:
         raise
     except Exception as e:
         logger.error(e)
         raise e
+
+@router.post(path + "/logout", tags=['users'])
+async def logoutUser(response: Response):
+    response.delete_cookie(key="token", path="/")
+    return {"status": "ok"}
 
 @router.post(path + "/verify", tags=['users'])
 async def verify(

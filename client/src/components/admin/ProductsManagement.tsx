@@ -19,12 +19,14 @@ import {
   MenuItem,
   Switch,
   CircularProgress,
-  Tooltip
+  Tooltip,
+  InputAdornment
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 import { useProducts } from '../../contexts/ProductContext';
 import { Product } from '../../types/Product';
@@ -38,7 +40,7 @@ interface ProductsManagementProps {
 }
 
 export const ProductsManagement: React.FC<ProductsManagementProps> = ({ onNotify }) => {
-  const { products, loading, addProduct, editProduct, removeProduct } = useProducts();
+  const { products, loading, searchProducts, fetchProducts, addProduct, editProduct, removeProduct } = useProducts();
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -50,16 +52,28 @@ export const ProductsManagement: React.FC<ProductsManagementProps> = ({ onNotify
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
+  const handleSearch = async () => {
+    if (search.trim() === '') {
+      await fetchProducts();
+      return;
+    }
+
+    await searchProducts(search);
+  };
+
+  const handleSearchKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      const matchesSearch =
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.description.toLowerCase().includes(search.toLowerCase());
       const matchesCategory =
         categoryFilter === 'ALL' || p.category?.toLowerCase() === categoryFilter.toLowerCase();
-      return matchesSearch && matchesCategory;
+      return matchesCategory;
     });
-  }, [products, search, categoryFilter]);
+  }, [products, categoryFilter]);
 
   const handleOpenAdd = () => {
     setEditingProduct(null);
@@ -124,9 +138,19 @@ export const ProductsManagement: React.FC<ProductsManagementProps> = ({ onNotify
         <TextField
           size="small"
           label="Search Products"
-          placeholder="Search by name or description..."
+          placeholder="Search products..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleSearchKeyPress}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              )
+            }
+          }}
           sx={{ minWidth: 260, flexGrow: 1 }}
         />
         <FormControl size="small" sx={{ minWidth: 160 }}>
